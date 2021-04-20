@@ -1,0 +1,6 @@
+@media (min-width: 1200px) {
+    .container{
+        max-width: 650px;
+        border-radius: 20px;
+    }
+}

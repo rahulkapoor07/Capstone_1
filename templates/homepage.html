@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Homepage{% endblock %}
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="">Trade Screener</a>
+    <ul class="nav navbar-nav navbar-right">
+        <li class="nav-item"><a class = "nav-link" href="/signup">SignUp</a></li>
+    </ul>
+</nav>
+
+<div class="container text-center my-5 bg-light px-5 py-5">
+    <form action="", method="POST">
+        <div class="form-group">
+            {{ form.hidden_tag() }}
+        {% for field in form if field.widget.input_type != 'hidden' %}
+        <p>
+        <!-- {{ field.label }} -->
+        {{ field(class_="form-control") }}
+        </p>
+       
+        {% for error in field.errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+        {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Login</button>
+    </form>
+    <hr class="text-light">
+    <a href="/signup" class="btn btn-success btn-lg">Create New Account</a>
+</div>
+{% endblock %}
