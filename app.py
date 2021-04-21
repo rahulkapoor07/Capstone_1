@@ -35,7 +35,7 @@ def homepage():
         else:
             form.username.errors = ['Please enter valid username/password']
     
-    return render_template('homepage.html', form=form)
+    return render_template('login.html', form=form)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():

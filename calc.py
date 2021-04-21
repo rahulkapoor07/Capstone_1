@@ -23,15 +23,3 @@ def popular_ticker():
             }
             data.append(element)
     return data
-    
-
-
-popular_ticker()
-
-
-# data = {
-#                 "name" : el["longName"],
-#                 "symbol" : el["symbol"],
-#                 "price" : el["regularMarketPrice"]
-#             }
-#     print(data)
