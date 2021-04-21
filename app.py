@@ -2,6 +2,7 @@ from flask import Flask, request, redirect, render_template, jsonify, flash, ses
 from models import db, connect_db, User, Stock, Cryptocurrency, User_stock, User_cryptocurrency
 from flask_debugtoolbar import DebugToolbarExtension
 from forms import SignupForm, loginForm
+from calc import popular_ticker
 import pdb
 
 app = Flask(__name__)
@@ -65,9 +66,18 @@ def user_page(username):
         return redirect('/')
     else:
         user = User.query.get(username)
-        return render_template('userpage.html', user=user)
+        trending_ticker = popular_ticker()
+        return render_template('userpage.html', user=user, data=trending_ticker)
 
 @app.route('/logout')
 def logout():
     session.pop('username')
+    flash("You have been logged out successfully!")
     return redirect('/')
+
+#User profile============================
+
+@app.route('/users/<username>/profile')
+def user_profile(username):
+    user = User.query.get(username)
+    return render_template('user-profile.html', user=user)

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Homepage{% endblock %}
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href=/users/{{user.username}}>Trade Screener</a>
+    <form action="">
+        <input class="form-inline form-control-lg form-control-inline my-2" type="search" placeholder="Search Ticker">
+        <button class="btn btn-success btn-md">Search</button>
+    </form>
+    <ul class="nav navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="/users/{{user.username}}/profile">{{user.username}}</a></li>
+        <li class="nav-item"><a class = "nav-link" href="/logout">Logout</a></li>
+    </ul>
+</nav>
+<div class="container">
+<h3>Name: <b>{{user.first_name}} {{user.last_name}}</b></h3>
+<h3>Username: <b>{{user.username}}</b></h3>
+<h3>Email Address: <b>{{user.email}}</b></h3>
+<h3>Stock's watchlist: <form action="/action_page.php">
+    <label for="cars">Choose a car:</label>
+    <select class="form-control" name="cars" id="cars">
+      <option value="volvo">Volvo</option>
+      <option value="saab">Saab</option>
+      <option value="opel">Opel</option>
+      <option value="audi">Audi</option>
+    </select>
+    <button class="btn btn-primary btn-md position-">Submit</button>
+  </form></h3>
+</div>
+
+{% endblock %}

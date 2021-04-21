@@ -3,13 +3,79 @@
 {% block content %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="">Trade Screener</a>
-    <ul class="nav navbar-nav navbar-right">
+    <form action="">
+        <input class="form-inline form-control-lg form-control-inline my-2" id="search" type="search" placeholder="Search Ticker">
+        <button class="btn btn-success btn-md">Search</button>
+    </form>
+    <ul class="nav navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="/users/{{user.username}}/profile">{{user.username}}</a></li>
         <li class="nav-item"><a class = "nav-link" href="/logout">Logout</a></li>
     </ul>
 </nav>
 <div class="container-fluid">
-    <h1>Hello {{user.first_name}} {{user.last_name}}</h1>
+    <h1 class="text-center">Hello {{user.first_name}} {{user.last_name}}</h1>
 </div>
 
+<div class="container">
+    <div class="row my-5">
+        <div class="col-md">
+            <h2 class="text-center">Trending Stocks</h2>
+            <table class="table table-secondary">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Symbol</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">ADD</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                {% for value in data %}
+                <tr>
+                  <td><a href="">{{value["name"]}}</a></td>
+                  <td><a href="">{{value["symbol"]}}</a></td>
+                  <td>{{value["price"]}}</td>
+                  <td><a class="btn btn-primary btn-md" href="">Add</a></td>
+                </tr>
+                {% endfor %}
+                
+              </tbody>
+            </table>
+        </div>
+        <div class="col-md">
+            <h2 class="text-center">CRYPTO</h2>
+            <table class="table table-secondary">
+                <thead>
+                  <tr>
+                    <!-- <th scope="col">#</th> -->
+                    <th scope="col">First</th>
+                    <th scope="col">Last</th>
+                    <th scope="col">Handle</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <!-- <th scope="row">1</th> -->
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                  </tr>
+                  <tr>
+                    <!-- <th scope="row">2</th> -->
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                  </tr>
+                  <tr>
+                    <!-- <th scope="row">3</th> -->
+                    <td>Larry</td>
+                    <td>the Bird</td>
+                    <td>@twitter</td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+</div>
 
 {% endblock %}
