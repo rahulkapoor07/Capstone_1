@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
-{% block title %}Homepage{% endblock %}
+{% block title %}User Page{% endblock %}
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark clearfix">
     <a class="navbar-brand" href="">Trade Screener</a>
-    <form action="">
-        <input class="form-inline form-control-lg form-control-inline my-2" id="search" type="search" placeholder="Search Ticker">
-        <button class="btn btn-success btn-md">Search</button>
+    <form action="" id="search-form">
+    <input class="form-inline form-control-sm form-control-inline my-2" id="symbol" type="text" name="ticker" placeholder="Search Ticker">
+    <input class="form-inline form-control-sm form-control-inline my-2" id="region" type="text" name="region" placeholder="region">
+    <button class="btn btn-primary btn-sm">Search</button>
     </form>
-    <ul class="nav navbar-nav">
+    <ul class="nav navbar-nav pull-right">
         <li class="nav-item"><a class="nav-link" href="/users/{{user.username}}/profile">{{user.username}}</a></li>
         <li class="nav-item"><a class = "nav-link" href="/logout">Logout</a></li>
     </ul>
 </nav>
-<div class="container-fluid">
-    <h1 class="text-center">Hello {{user.first_name}} {{user.last_name}}</h1>
+<div class="container-fluid head">
+    <h1 class="text-center">{{user.first_name}} {{user.last_name}}</h1>
 </div>
 
 <div class="container">
@@ -31,12 +32,12 @@
               </thead>
               <tbody>
                 
-                {% for value in data %}
+                {% for value in stock %}
                 <tr>
                   <td><a href="">{{value["name"]}}</a></td>
                   <td><a href="">{{value["symbol"]}}</a></td>
-                  <td>{{value["price"]}}</td>
-                  <td><a class="btn btn-primary btn-md" href="">Add</a></td>
+                  <!-- <td>{{value["price"]}}</td> -->
+                  <td><a class="btn btn-primary btn-md" href="">ADD</a></td>
                 </tr>
                 {% endfor %}
                 
@@ -48,31 +49,21 @@
             <table class="table table-secondary">
                 <thead>
                   <tr>
-                    <!-- <th scope="col">#</th> -->
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Symbol</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">ADD</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <!-- <th scope="row">1</th> -->
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-                  <tr>
-                    <!-- <th scope="row">2</th> -->
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                  </tr>
-                  <tr>
-                    <!-- <th scope="row">3</th> -->
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                  </tr>
+                  {% for value in crypto %}
+                <tr>
+                  <td><a href="">{{value["name"]}}</a></td>
+                  <td><a href="">{{value["symbol"]}}</a></td>
+                  <!-- <td>{{value["price"]}}</td> -->
+                  <td><a class="btn btn-primary btn-md" href="">ADD</a></td>
+                </tr>
+                {% endfor %}
                 </tbody>
               </table>
         </div>

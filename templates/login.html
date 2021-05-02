@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Homepage{% endblock %}
+{% block title %}Login{% endblock %}
 {% block content %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="">Trade Screener</a>
@@ -14,7 +14,6 @@
             {{ form.hidden_tag() }}
         {% for field in form if field.widget.input_type != 'hidden' %}
         <p>
-        <!-- {{ field.label }} -->
         {{ field(class_="form-control") }}
         </p>
        

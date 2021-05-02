@@ -15,7 +15,7 @@ class User(db.Model):
 
     __tablename__ = "users"
 
-    id = db.Column(db.Integer,autoincrement=True)
+    id = db.Column(db.Integer, autoincrement=True)
     first_name = db.Column(db.Text, nullable=False)
     last_name = db.Column(db.Text, nullable=False)
     username = db.Column(db.Text, primary_key=True)
@@ -46,31 +46,31 @@ class Stock(db.Model):
 
     __tablename__="stocks"
 
-    id = db.Column(db.Integer, autoincrement=True)
-    stock_name = db.Column(db.Text, primary_key=True)
+    id = db.Column(db.Integer,primary_key=True, autoincrement=True)
+    stock_name = db.Column(db.Text, nullable=False, unique=True)
     ticker_symbol = db.Column(db.Text, nullable=False, unique=True)
-    stock_price = db.Column(db.Float,nullable=True)
+    stock_price = db.Column(db.Float,nullable=False)
 
 class Cryptocurrency(db.Model):
 
     __tablename__="cryptocurrencies"
 
-    id = db.Column(db.Integer, autoincrement=True)
-    crypto_name = db.Column(db.Text, primary_key=True)
+    id = db.Column(db.Integer,primary_key=True, autoincrement=True)
+    crypto_name = db.Column(db.Text, nullable=False, unique=True)
     ticker_symbol = db.Column(db.Text, nullable=False, unique=True)
-    crypto_price = db.Column(db.Float,nullable=True)
+    crypto_price = db.Column(db.Float,nullable=False)
 
 
 class User_stock(db.Model):
 
     __tablename__="users_stocks"
 
-    user_username = db.Column(db.Text, db.ForeignKey("users.username"), primary_key=True)
-    stocks_stock_name = db.Column(db.Text, db.ForeignKey("stocks.stock_name"), primary_key=True)
+    user_username = db.Column(db.Text, db.ForeignKey("users.username"),primary_key=True)
+    stock_id = db.Column(db.Integer, db.ForeignKey("stocks.id"), primary_key=True)
 
 class User_cryptocurrency(db.Model):
 
     __tablename__="users_cryptocurrencies"
 
     user_username = db.Column(db.Text, db.ForeignKey("users.username"), primary_key=True)
-    cryptos_crypto_name = db.Column(db.Text, db.ForeignKey("cryptocurrencies.crypto_name"), primary_key=True)
+    crypto_id = db.Column(db.Integer, db.ForeignKey("cryptocurrencies.id"), primary_key=True)

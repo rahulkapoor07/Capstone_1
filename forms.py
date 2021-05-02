@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, PasswordField
+from wtforms import StringField, IntegerField, PasswordField, FloatField
 from wtforms.validators import InputRequired, Email, Length, EqualTo
 
 class SignupForm(FlaskForm):
@@ -14,3 +14,8 @@ class loginForm(FlaskForm):
     username = StringField("Username", validators=[(InputRequired("Please enter username"))], render_kw = {"placeholder" : "Username"})
     password = PasswordField("password", validators= [InputRequired("Please enter password")], render_kw = {"placeholder" : "Password"})
 
+class TickerForm(FlaskForm):
+    name = StringField("Search Ticker",validators=[InputRequired("Please mention name of stock")], render_kw = {"placeholder" : "Search Name"})
+    ticker = StringField("Search Ticker",validators=[InputRequired("Please mention ticker symbol of stock")], render_kw = {"placeholder" : "Search Ticker"})
+    price = FloatField("Price",validators=[InputRequired()], render_kw = {"placeholder" : "Price"})
+    region = StringField('Region',validators=[InputRequired("Please mention the region you want to search for")], render_kw = {"placeholder" : "Region"})
