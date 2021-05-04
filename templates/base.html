@@ -11,10 +11,8 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-    {% for category, msg in get_flashed_messages(with_categories=true) %}
-    <p class="{{category}}">{{ msg }}</p>
-    {% endfor %}
     {% block content %}{% endblock %}
+    <script src="https://kit.fontawesome.com/99926adb40.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="/static/app.js"></script>

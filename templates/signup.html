@@ -8,6 +8,9 @@
     </ul>
 </nav>
 
+{% for category, msg in get_flashed_messages(with_categories=true) %}
+<p class="{{category}}">{{ msg }}</p>
+{% endfor %}
 <div class="container text-center my-5 bg-light px-5 py-5">
     <form action="", method="POST">
         <div class="form-group">

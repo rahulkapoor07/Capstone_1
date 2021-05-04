@@ -2,51 +2,40 @@
 {% block title %}User Page{% endblock %}
 {% block content %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark clearfix">
-    <a class="navbar-brand" href="">Trade Screener</a>
-    <form action="" id="search-form">
-    <input class="form-inline form-control-sm form-control-inline my-2" id="symbol" type="text" name="ticker" placeholder="Search Ticker">
-    <input class="form-inline form-control-sm form-control-inline my-2" id="region" type="text" name="region" placeholder="region">
-    <button class="btn btn-primary btn-sm">Search</button>
-    </form>
-    <ul class="nav navbar-nav pull-right">
-        <li class="nav-item"><a class="nav-link" href="/users/{{user.username}}/profile">{{user.username}}</a></li>
-        <li class="nav-item"><a class = "nav-link" href="/logout">Logout</a></li>
-    </ul>
+  <a class="navbar-brand" href="">Trade Screener</a>
+  <form action="/market/stock-crypto/search", method="POST">
+    {{ form.hidden_tag() }}
+    {% for field in form if field.widget.input_type != 'hidden' %}
+    <p>
+    {{ field(class_="form-inline form-control-sm form-control-inline my-2") }}
+    {% for error in field.errors %}
+        <span class="form-text text-danger">{{ error }}</span>
+    {% endfor %}
+    {% endfor %}
+    </p>
+    <button class="btn btn-primary btn-sm" type="submit">Search</button>
+</form>
+  <ul class="nav navbar-nav pull-right">
+      <li class="nav-item"><a class="nav-link "text-capitalize" href="/users/{{user.username}}/profile">{{user.username}}</a></li>
+      <li class="nav-item"><a class = "nav-link" href="/logout">Logout</a></li>
+  </ul>
 </nav>
-<div class="container-fluid head">
-    <h1 class="text-center">{{user.first_name}} {{user.last_name}}</h1>
-</div>
 
-<div class="container">
-    <div class="row my-5">
-        <div class="col-md">
-            <h2 class="text-center">Trending Stocks</h2>
-            <table class="table table-secondary">
-              <thead>
-                <tr>
-                  <th scope="col">Name</th>
-                  <th scope="col">Symbol</th>
-                  <th scope="col">Price</th>
-                  <th scope="col">ADD</th>
-                </tr>
-              </thead>
-              <tbody>
-                
-                {% for value in stock %}
-                <tr>
-                  <td><a href="">{{value["name"]}}</a></td>
-                  <td><a href="">{{value["symbol"]}}</a></td>
-                  <!-- <td>{{value["price"]}}</td> -->
-                  <td><a class="btn btn-primary btn-md" href="">ADD</a></td>
-                </tr>
-                {% endfor %}
-                
-              </tbody>
-            </table>
-        </div>
-        <div class="col-md">
-            <h2 class="text-center">CRYPTO</h2>
-            <table class="table table-secondary">
+{% for category, msg in get_flashed_messages(with_categories=true) %}
+<p class="{{category}}">{{ msg }}</p>
+{% endfor %}
+
+<div class="userpage_wrap">
+  <div class="container-fluid head">
+    <h1 class="text-center">{{user.first_name}} {{user.last_name}}</h1>
+  </div>
+
+
+  <div class="container">
+      <div class="row my-5">
+          <div class="col-md">
+              <h2 class="text-center">Trending Stocks</h2>
+              <table class="table table-secondary">
                 <thead>
                   <tr>
                     <th scope="col">Name</th>
@@ -56,17 +45,43 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for value in crypto %}
-                <tr>
-                  <td><a href="">{{value["name"]}}</a></td>
-                  <td><a href="">{{value["symbol"]}}</a></td>
-                  <!-- <td>{{value["price"]}}</td> -->
-                  <td><a class="btn btn-primary btn-md" href="">ADD</a></td>
-                </tr>
-                {% endfor %}
+                  
+                  {% for value in stock %}
+                  <tr>
+                    <td><a href="">{{value["name"]}}</a></td>
+                    <td><a href="">{{value["symbol"]}}</a></td>
+                    <td class="text">{{value["price"]}}</td>
+                    <td><a class="btn btn-primary btn-md" href="">ADD</a></td>
+                  </tr>
+                  {% endfor %}
+                  
                 </tbody>
               </table>
-        </div>
+          </div>
+          <div class="col-md">
+              <h2 class="text-center">Trending Crypto</h2>
+              <table class="table table-secondary">
+                  <thead>
+                    <tr>
+                      <th scope="col">Name</th>
+                      <th scope="col">Symbol</th>
+                      <th scope="col">Price</th>
+                      <th scope="col">ADD</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for value in crypto %}
+                  <tr>
+                    <td><a href="">{{value["name"]}}</a></td>
+                    <td><a href="">{{value["symbol"]}}</a></td>
+                    <td class="text">{{value["price"]}}</td>
+                    <td><a class="btn btn-primary btn-md" href="">ADD</a></td>
+                  </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+          </div>
+  </div>
 </div>
 
 {% endblock %}

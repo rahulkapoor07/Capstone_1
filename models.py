@@ -15,13 +15,14 @@ class User(db.Model):
 
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, autoincrement=True)
     first_name = db.Column(db.Text, nullable=False)
     last_name = db.Column(db.Text, nullable=False)
     username = db.Column(db.Text, primary_key=True)
     email = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
 
+    stocks = db.relationship('Stock', secondary="users_stocks", backref="user")
+    cryptos = db.relationship('Cryptocurrency', secondary="users_cryptocurrencies", backref="user")
 
     @classmethod
     def register(cls, first_name, last_name, username, email, password):
@@ -49,7 +50,9 @@ class Stock(db.Model):
     id = db.Column(db.Integer,primary_key=True, autoincrement=True)
     stock_name = db.Column(db.Text, nullable=False, unique=True)
     ticker_symbol = db.Column(db.Text, nullable=False, unique=True)
+    region = db.Column(db.Text, nullable=False, default="US")
     stock_price = db.Column(db.Float,nullable=False)
+
 
 class Cryptocurrency(db.Model):
 
@@ -58,6 +61,7 @@ class Cryptocurrency(db.Model):
     id = db.Column(db.Integer,primary_key=True, autoincrement=True)
     crypto_name = db.Column(db.Text, nullable=False, unique=True)
     ticker_symbol = db.Column(db.Text, nullable=False, unique=True)
+    region = db.Column(db.Text, nullable=False, default="US")
     crypto_price = db.Column(db.Float,nullable=False)
 
 

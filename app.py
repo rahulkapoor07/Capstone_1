@@ -1,8 +1,8 @@
 from flask import Flask, request, redirect, render_template, jsonify, flash, session,g
 from models import db, connect_db, User, Stock, Cryptocurrency, User_stock, User_cryptocurrency
 from flask_debugtoolbar import DebugToolbarExtension
-from forms import SignupForm, loginForm, TickerForm
-from calc import popular_ticker
+from forms import SignupForm, LoginForm, TickerForm
+from calc import popular_ticker, search_stock
 from sqlalchemy.exc import IntegrityError
 from werkzeug.datastructures import MultiDict
 import sys
@@ -29,13 +29,15 @@ def add_user_to_g():
         g.user = None
 
 
+
+
 @app.route('/')
 def redirect_to_homepage():
     return redirect('/login')
 
 @app.route('/login', methods=['GET', 'POST'])
 def homepage():
-    form = loginForm()
+    form = LoginForm()
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
@@ -63,7 +65,7 @@ def signup():
             db.session.rollback()
             flash('Username already taken! Please try different username', "error")
         else:
-            new_user = User.register(first_name, last_name, username, email, password)
+            new_user = User.register(first_name.capitalize(), last_name.capitalize(), username, email, password)
             if new_user:
                 db.session.add(new_user)
                 db.session.commit()
@@ -92,66 +94,99 @@ def user_page(username):
 
 @app.route('/users/<username>/profile')
 def user_profile(username):
+    if not g.user:
+        flash("Access unauthorized.", "error")
+        return redirect("/")
     user = User.query.get(username)
-    return render_template('user-profile.html', user=user)
+    stocks = user.stocks;
+    cryptos = user.cryptos;
+    return render_template('user-profile.html', user=user, stocks=stocks, cryptos=cryptos)
 
-@app.route('/api/stocks-crypto/post', methods=["POST"])
-def post_data():
-    response = request.json
-    res_dict = response['params']
-    data = MultiDict(mapping=res_dict)
-    form = TickerForm(data, meta={'csrf': False})
-    if form.validate():
-        if res_dict["type"] == "equity":
-            stock_name = form.name.data
-            stock_symbol = form.ticker.data
-            price = form.price.data
-            region = form.region.data
-            if Stock.query.filter_by(ticker_symbol=stock_symbol).first():
-                db.session.rollback()
-                return (jsonify({"error": "<h1>Stock already exists in database</h1>"}), 201)
+@app.route('/users/<username>/profile/<int:stock_id>')
+def stock_details(username, stock_id):
+    user = User.query.get(username)
+    stock = Stock.query.get_or_404(stock_id)
+    crypto = Cryptocurrency.query.get_or_404(stock_id)
+    return render_template('users-stock.html', stock=stock, crypto=crypto)
+
+@app.route('/market/stock-crypto/search', methods=['GET', 'POST'])
+def stock_crypto():
+    form = TickerForm()
+    user = g.user
+    if form.validate_on_submit():
+        symbol = form.ticker.data
+        region = form.region.data
+        data = search_stock(symbol, region)
+        if data["type"] == "stock":
+            if Stock.query.filter_by(ticker_symbol=symbol).first():
+                stock = Stock.query.filter_by(ticker_symbol=symbol).first()
+                return render_template('stock-profile.html', data=data, user=user, stock=stock)
             else:
-                stock = Stock(stock_name=stock_name, ticker_symbol=stock_symbol, stock_price=price)
+                stock = Stock(stock_name=data["name"], ticker_symbol=data["symbol"],region=region, stock_price=data["price"])
                 db.session.add(stock)
                 db.session.commit()
-                return (jsonify({"result" : "<h1> Stock Added to database</h1>"}), 201)
-        elif res_dict["type"] == "crypto":
-            crypto_name = form.name.data
-            crypto_symbol = form.ticker.data
-            price = form.price.data
-            region = form.region.data
-            if Cryptocurrency.query.filter_by(ticker_symbol=crypto_symbol).first():
-                db.session.rollback()
-                return (jsonify({"error" : "<h1>Crypto Already in database<h1/>"}), 201)
+                return render_template('stock-profile.html', data=data, user=user, stock=stock)
+        elif data["type"] == "crypto":
+            if Cryptocurrency.query.filter_by(ticker_symbol=symbol).first():
+                crypto = Cryptocurrency.query.filter_by(ticker_symbol=symbol).first()
+                return render_template('stock-profile.html', data=data, user=user, crypto=crypto)
             else:
-                crypto = Cryptocurrency(crypto_name=crypto_name, ticker_symbol=crypto_symbol, crypto_price=price)
+                crypto = Cryptocurrency(crypto_name=data["name"], ticker_symbol=data["symbol"],region=region, crypto_price=data["price"])
                 db.session.add(crypto)
                 db.session.commit()
-                return (jsonify({"result" : "<h1>Crypto Added to database</h1>"}), 201)
-
-@app.route('/api/stock-crypto/search')
-def stock_crypto():
-    # ticker = request.args["ticker"]
-    # region = request.args["region"]
-    # username = session["username"]
-    return render_template('stock-profile.html')
+                return render_template('stock-profile.html', data=data, user=user, crypto=crypto)
+        elif data["type"] == "not found":
+            flash("Please put correct ticker symbol!", "error")
+            return redirect(f'/users/{user.username}')
+    else:
+        return redirect(f'/users/{user.username}')
 
 
+# API to add stock/crypto into users profile++++++++++++++++
+@app.route("/users/profile/add", methods=['POST'])
+def add_stock():
+    response = request.json
+    market_data = response["marketData"]
+    user = g.user
+    if market_data["type"] == "stock":
+        if User_stock.query.filter(User_stock.user_username==user.username, User_stock.stock_id==market_data["id"]).all():
+            return jsonify({"message" : "stock already added in joint table"})
+        else:
+            user_stock_table = User_stock(user_username=user.username, stock_id=market_data["id"])
+            db.session.add(user_stock_table)
+            db.session.commit()
+            return (jsonify({"message": "stock added to db in joint table"}), 201)
+    elif market_data["type"] == "crypto":
+        if User_cryptocurrency.query.filter(User_cryptocurrency.user_username==user.username, User_cryptocurrency.crypto_id==market_data["id"]).all():
+            return jsonify({"message" : "crypto already added in joint table"})
+        else:
+            user_cryptocurrency_table = User_cryptocurrency(user_username=user.username, crypto_id=market_data["id"])
+            db.session.add(user_cryptocurrency_table)
+            db.session.commit()
+            return (jsonify({"message": "crypto added to db in joint table"}), 201)
+    else:
+        return (jsonify({"message": "error"}), 201)
 
 
-# @app.after_request
-# def add_header(req):
-#     """Add non-caching headers on every request."""
+#API to delete/remove stock/crypto from users profile++++++++++
+@app.route('/users/profile/delete/<type>/<int:stock_id>', methods=['DELETE'])
+def delete_stock(type, stock_id):
+    stock = Stock.query.get_or_404(stock_id)
+    crypto = Cryptocurrency.query.get_or_404(stock_id)
+    user = g.user
+    if type == "stock":
+        User_stock.query.filter(User_stock.user_username==user.username, User_stock.stock_id==stock.id).delete()
+        db.session.commit()
+        return jsonify({"message": "stock deleted"})
+    elif type == "crypto":
+        User_cryptocurrency.query.filter(User_cryptocurrency.user_username==user.username, User_cryptocurrency.crypto_id==crypto.id).delete()
+        db.session.commit()
+        return jsonify({"message": "crypto deleted"})
 
-#     req.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-#     req.headers["Pragma"] = "no-cache"
-#     req.headers["Expires"] = "0"
-#     req.headers['Cache-Control'] = 'public, max-age=0'
-#     return req
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    """404 NOT FOUND page."""
+# @app.errorhandler(404)
+# def page_not_found(e):
+#     """404 NOT FOUND page."""
 
-    return render_template('404.html'), 404
+#     return render_template('404.html'), 404

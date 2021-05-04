@@ -5,17 +5,53 @@
     }
 }
 
-body {
-    background-color: #b4a5a5;
-}
 
 head {
     background-color: #e2703a;
 }
 .success {
     color: green;
+    font-size: 1.5rem;
 }
 
 .error {
     color: red;
+    font-size: 1.5rem;
+}
+
+/* .userpage_wrap{
+    background-image: url("/assets/background.jpg");
+    background-size: 100%;
+    background-repeat: no-repeat;
+} */
+
+.unfollow:hover {
+    background-color: white;
+    outline: blue;
+    color: blue;
+}
+.follow-cls:hover {
+    background-color: white;
+    outline: blue;
+    color: blue;
+}
+
+.unfollow:hover span {
+    display: none;
+}
+
+.unfollow:hover:before {
+    content: "Unfollow";
+}
+
+.price {
+    text-decoration: solid;
+}
+
+.not {
+    color: green;
+}
+
+.stock-detail {
+    background-color: #f5f7b2;
 }

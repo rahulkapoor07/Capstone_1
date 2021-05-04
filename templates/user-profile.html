@@ -9,20 +9,43 @@
         <li class="nav-item"><a class = "nav-link" href="/logout">Logout</a></li>
     </ul>
 </nav>
-<div class="container text-center">
-<h3>Name: <b>{{user.first_name}} {{user.last_name}}</b></h3>
-<h3>Username: <b>{{user.username}}</b></h3>
-<h3>Email Address: <b>{{user.email}}</b></h3>
-<h3>Stock's watchlist: <form action="">
-    <label for="cars">Choose a car:</label>
-    <select class="form-control" name="cars" id="cars">
-      <option value="volvo">Volvo</option>
-      <option value="saab">Saab</option>
-      <option value="opel">Opel</option>
-      <option value="audi">Audi</option>
-    </select>
-    <button class="btn btn-primary btn-md position-">Submit</button>
-  </form></h3>
+
+{% for category, msg in get_flashed_messages(with_categories=true) %}
+<p class="{{category}}">{{ msg }}</p>
+{% endfor %}
+<div class="container text-center my-5">
+<h4>Name: <b>{{user.first_name}} {{user.last_name}}</b></h4>
+<h4>Username: <b>{{user.username}}</b></h4>
+<h4>Email Address: <b>{{user.email}}</b></h4>
+<h4>Stock's watchlist:</h4>
+<div class="container stock-detail">
+  <table class="table text-dark">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Ticker Symbol</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+        {% for stock in stocks %}
+        <tr>
+        <td><a href="/users/{{user.username}}/profile/{{stock.id}}">{{stock.stock_name}}</a></td>
+        <td>{{stock.ticker_symbol}}</td>
+        </tr>
+        {% endfor %}
+        
+        
+        {% for crypto in cryptos %}
+        <tr>
+        <td><a href="/users/{{user.username}}/profile/{{crypto.id}}">{{crypto.crypto_name}}</a></td>
+        <td>{{crypto.ticker_symbol}}</td>
+        </tr>
+        {% endfor %}
+      
+    </tbody>
+  </table>
+</div>
 </div>
 
 {% endblock %}
