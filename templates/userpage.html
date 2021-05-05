@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
 {% block title %}User Page{% endblock %}
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark clearfix">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-between">
   <a class="navbar-brand" href="">Trade Screener</a>
-  <form action="/market/stock-crypto/search", method="POST">
+  <form class="form form-horizontal" action="/market/stock-crypto/search", method="POST">
     {{ form.hidden_tag() }}
     {% for field in form if field.widget.input_type != 'hidden' %}
     <p>
-    {{ field(class_="form-inline form-control-sm form-control-inline my-2") }}
+    {{ field(class_="form-control mr-sm-2") }}
     {% for error in field.errors %}
         <span class="form-text text-danger">{{ error }}</span>
     {% endfor %}
     {% endfor %}
     </p>
-    <button class="btn btn-primary btn-sm" type="submit">Search</button>
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 </form>
   <ul class="nav navbar-nav pull-right">
       <li class="nav-item"><a class="nav-link "text-capitalize" href="/users/{{user.username}}/profile">{{user.username}}</a></li>
@@ -25,16 +25,15 @@
 <p class="{{category}}">{{ msg }}</p>
 {% endfor %}
 
-<div class="userpage_wrap">
-  <div class="container-fluid head">
-    <h1 class="text-center">{{user.first_name}} {{user.last_name}}</h1>
-  </div>
+<div class="container head">
+    <h1 class="text-center text-dark ml-5">{{user.first_name}} {{user.last_name}}</h1>
+</div>
 
 
-  <div class="container">
-      <div class="row my-5">
-          <div class="col-md">
-              <h2 class="text-center">Trending Stocks</h2>
+<div class="container">
+    <div class="row my-5">
+        <div class="col-md">
+            <h2 class="text-center">Trending Stocks</h2>
               <table class="table table-secondary">
                 <thead>
                   <tr>
@@ -46,12 +45,20 @@
                 </thead>
                 <tbody>
                   
-                  {% for value in stock %}
+                  {% for stock in stocks %}
                   <tr>
-                    <td><a href="">{{value["name"]}}</a></td>
-                    <td><a href="">{{value["symbol"]}}</a></td>
-                    <td class="text">{{value["price"]}}</td>
-                    <td><a class="btn btn-primary btn-md" href="">ADD</a></td>
+                    <td>{{stock["name"]}}</td>
+                    <td><b>{{stock["symbol"]}}</b></td>
+                    <td><b>{{stock["price"]}}</b></td>
+                    <td><form action="" class=follow-form-stock>
+                      <input type="hidden" class="hidden-id-stock" value="{{stock.id}}">
+                      <input type="hidden" class="hidden-type-stock" value="stock">
+                      <input type="hidden" class="hidden-name-stock" value="{{stock.stock_name}}">
+                      <input type="hidden" class="hidden-symbol-stock" value="{{stock.ticker_symbol}}">
+                      <input type="hidden" class="hidden-region-stock" value="{{stock.region}}">
+                      <input type="hidden" class="hidden-price-stock" value="{{stock.stock_price}}">
+                      <button class="btn btn-primary btn-lg py-1 follow-cls follow-btn-stock" ><span>Follow</span></button>
+                    </form></td>
                   </tr>
                   {% endfor %}
                   
@@ -70,12 +77,20 @@
                     </tr>
                   </thead>
                   <tbody>
-                    {% for value in crypto %}
+                    {% for crypto in cryptos %}
                   <tr>
-                    <td><a href="">{{value["name"]}}</a></td>
-                    <td><a href="">{{value["symbol"]}}</a></td>
-                    <td class="text">{{value["price"]}}</td>
-                    <td><a class="btn btn-primary btn-md" href="">ADD</a></td>
+                    <td>{{crypto["name"]}}</td>
+                    <td><b>{{crypto["symbol"]}}</b></td>
+                    <td><b>{{crypto["price"]}}</b></td>
+                    <td><form action="" class="follow-form-crypto">
+                      <input type="hidden" class="hidden-id-crypto" value="{{crypto.id}}">
+                      <input type="hidden" class="hidden-type-crypto" value="crypto">
+                      <input type="hidden" class="hidden-name-crypto" value="{{crypto.crypto_name}}">
+                      <input type="hidden" class="hidden-symbol-crypto" value="{{crypto.ticker_symbol}}">
+                      <input type="hidden" class="hidden-region-crypto" value="{{crypto.region}}">
+                      <input type="hidden" class="hidden-price-crypto" value="{{crypto.crypto_price}}">
+                      <button class="btn btn-primary btn-lg py-1 follow-cls follow-btn-crypto" ><span>Follow</span></button>
+                    </form></td>
                   </tr>
                   {% endfor %}
                   </tbody>

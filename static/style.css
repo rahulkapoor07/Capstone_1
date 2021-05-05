@@ -5,10 +5,17 @@
     }
 }
 
-
-head {
-    background-color: #e2703a;
+body{
+    background-image: url("https://images.unsplash.com/photo-1620111975795-d98deff3ca89?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80");
 }
+
+#summary-stock #complete-details-stock #company-offices-stock #address-stock{
+    background-color: #de8971;
+}
+
+/* head {
+    background-color: #e2703a;
+} */
 .success {
     color: green;
     font-size: 1.5rem;
@@ -19,11 +26,11 @@ head {
     font-size: 1.5rem;
 }
 
-/* .userpage_wrap{
-    background-image: url("/assets/background.jpg");
-    background-size: 100%;
-    background-repeat: no-repeat;
-} */
+.chart-sizing {
+    margin-top: 20px;
+    width: 800px;
+    height: 400px;
+}
 
 .unfollow:hover {
     background-color: white;

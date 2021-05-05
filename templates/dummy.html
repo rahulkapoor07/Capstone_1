@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}stock page{% endblock %}
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark clearfix justify-content-between">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark clearfix">
     <a class="navbar-brand" href="/users/{{user.username}}">Trade Screener</a>
     <ul class="nav navbar-nav pull-right">
       <li class="nav-item"><a class="nav-link" href="/users/{{user.username}}/profile">{{user.username}}</a></li>
@@ -26,10 +26,18 @@
         </thead>
         <tbody>
           <tr>
-            <td class = "chartData-name" data-name="{{data["name"]}}">{{data["name"]}}</td>
-            <td class = "chartData-symbol" data-symbol="{{data["symbol"]}}">{{data["symbol"]}}</td>
-            <td class = "chartData-region" data-region="{{data["region"]}}">{{data["region"]}}</td>
-            <td class = "chartData-price" data-price="{{data["price"]}}">{{data["price"]}}</td>
+            {% if stock %}
+                <td class = "chartData-name" data-name="{{stock.stock_name}}">{{stock.stock_name}}</td>
+                <td class = "chartData-symbol" data-symbol="{{stock.ticker_symbol}}">{{stock.ticker_symbol}}</td>
+                <td class = "chartData-region" data-region="{{stock.region}}">{{stock.region}}</td>
+                <td class = "chartData-price" data-price="{{stock.price}}">{{stock.price}}</td>  
+            {% elif crypto %}
+            <td class = "chartData-name" data-name="{{crypto.crypto_name}}">{{crypto.crypto_name}}</td>
+            <td class = "chartData-symbol" data-symbol="{{crypto.ticker_symbol}}">{{crypto.ticker_symbol}}</td>
+            <td class = "chartData-region" data-region="{{crypto.region}}">{{crypto.region}}</td>
+            <td class = "chartData-price" data-price="{{crypto.price}}">{{crypto.price}}</td>
+            {% endif %}
+
           </tr>
         </tbody>
       </table>
@@ -38,17 +46,23 @@
       <form action="" id=follow-form>
         {% if stock %}
         <input type="hidden" id="hidden-id" value="{{stock.id}}">
+        <input type="hidden" id="hidden-type" value="{{data["type"]}}">
+        <input type="hidden" id="hidden-name" value="{{stock.stock_name}}">
+        <input type="hidden" id="hidden-symbol" value="{{stock.ticker_symbol}}">
+        <input type="hidden" id="hidden-region" value="{{stock.region}}">
+        <input type="hidden" id="hidden-price" value="{{stock.price}}">
         {% elif crypto %}
         <input type="hidden" id="hidden-id" value="{{crypto.id}}">
+        <input type="hidden" id="hidden-type" value="{{data["type"]}}">
+        <input type="hidden" id="hidden-name" value="{{crypto.crypto_name}}">
+        <input type="hidden" id="hidden-symbol" value="{{crypto.ticker_symbol}}">
+        <input type="hidden" id="hidden-region" value="{{crypto.region}}">
+        <input type="hidden" id="hidden-price" value="{{crypto.price}}">
         {% else %}
         <input type="hidden" id="hidden-id" value="error">
         {% endif %}
-        <input type="hidden" id="hidden-type" value="{{data["type"]}}">
-        <input type="hidden" id="hidden-name" value="{{data["name"]}}">
-        <input type="hidden" id="hidden-symbol" value="{{data["symbol"]}}">
-        <input type="hidden" id="hidden-region" value="{{data["region"]}}">
-        <input type="hidden" id="hidden-price" value="{{data["price"]}}">
-      <button class="btn btn-primary btn-lg mt-3 py-2 follow-cls" id="follow-btn"><span>Follow</span></button>
+
+      <button class="btn btn-primary btn-lg mt-3 py-2 follow-btn">Follow</button>
     </form>
     </div>
   </div>
@@ -56,9 +70,9 @@
 
 
 
-<!-- <div class="container">
+<div class="container">
   <form action="" id="chart-form">
-    <label class="text-dark" for="interval">Interval:</label>
+    <label for="interval">Interval:</label>
     <select name="interval" id="interval">
       <option value="1m">1m</option>
       <option value="2m">2m</option>
@@ -68,7 +82,7 @@
       <option value="1d">1d</option>
     </select>
 
-      <label class="text-dark" for="range">Range:</label>
+      <label for="range">Range:</label>
       <select name="range" id="range">
         <option value="1d">1d</option>
         <option value="5d">5d</option>
@@ -87,8 +101,8 @@
   </form>
 </div>
 
-<div class="container my-2" id= "chart" style="background-color: wheat">
+<div class="container my-2" id= "chart" style="background-color: white"">
     <!-- <canvas id="myChart" width="800" height="400"></canvas> -->
-<!-- </div> -->
+</div>
 
 {% endblock %}

@@ -51,6 +51,7 @@ class Stock(db.Model):
     stock_name = db.Column(db.Text, nullable=False, unique=True)
     ticker_symbol = db.Column(db.Text, nullable=False, unique=True)
     region = db.Column(db.Text, nullable=False, default="US")
+    which_type = db.Column(db.Text, nullable=False)
     stock_price = db.Column(db.Float,nullable=False)
 
 
@@ -62,6 +63,7 @@ class Cryptocurrency(db.Model):
     crypto_name = db.Column(db.Text, nullable=False, unique=True)
     ticker_symbol = db.Column(db.Text, nullable=False, unique=True)
     region = db.Column(db.Text, nullable=False, default="US")
+    which_type = db.Column(db.Text, nullable=False)
     crypto_price = db.Column(db.Float,nullable=False)
 
 

@@ -89,8 +89,25 @@ def user_page(username):
     else:
         user = User.query.get(username)
         form = TickerForm()
-        [stock, crypto] = popular_ticker()
-        return render_template('userpage.html', user=user, stock=stock, crypto=crypto, form=form)
+        [stocks, cryptos] = popular_ticker()
+        # stocks_db = []
+        # cryptos = []
+        # for stock in stocks:
+        #     if Stock.query.filter_by(ticker_symbol=stock["symbol"]).first():
+        #         return redirect(f'/users/{user.username}')
+        #     else:
+        #         stocks_db += Stock(stock_name=stock["name"], ticker_symbol=stock["symbol"], region=stock["region"], stock_price=stock["price"])
+        #         db.session.add(stocks_db)
+        #         db.session.commit()
+        # for crypto in cryptos:
+        #     if Cryptocurrency.query.filter_by(ticker_symbol=crypto["symbol"]).first():
+        #         return redirect(f'/users/{user.username}')
+        #     else:
+        #         cryptos_db += Cryptocurrency(crypto_name=crypto["name"], ticker_symbol=crypto["symbol"], region=crypto["region"], crypto_price=crypto["price"])
+        #         db.session.add(crypto)
+        #         db.session.commit()
+        return render_template('userpage.html', user=user, stocks=stocks, cryptos=cryptos, form=form)
+            
 
 @app.route('/users/<username>/profile')
 def user_profile(username):
@@ -102,15 +119,26 @@ def user_profile(username):
     cryptos = user.cryptos;
     return render_template('user-profile.html', user=user, stocks=stocks, cryptos=cryptos)
 
-@app.route('/users/<username>/profile/<int:stock_id>')
-def stock_details(username, stock_id):
+@app.route('/users/<username>/profile/<which_type>/<int:stock_id>')
+def stock_details(username,which_type, stock_id):
+    if not g.user:
+        flash("Access unauthorized.", "error")
+        return redirect("/")
     user = User.query.get(username)
-    stock = Stock.query.get_or_404(stock_id)
-    crypto = Cryptocurrency.query.get_or_404(stock_id)
-    return render_template('users-stock.html', stock=stock, crypto=crypto)
+    if which_type == "stock":
+        stock = Stock.query.get_or_404(stock_id)
+        stock_data = search_stock(stock.ticker_symbol, stock.region)
+        return render_template('users-stock.html',user=user, stock=stock, stock_data=stock_data)
+    else:
+        crypto = Cryptocurrency.query.get_or_404(stock_id)
+        crypto_data = search_stock(crypto.ticker_symbol, crypto.region)
+        return render_template('users-stock.html',user=user, crypto=crypto, crypto_data=crypto_data)
 
 @app.route('/market/stock-crypto/search', methods=['GET', 'POST'])
 def stock_crypto():
+    if not g.user:
+        flash("Access unauthorized.", "error")
+        return redirect("/")
     form = TickerForm()
     user = g.user
     if form.validate_on_submit():
@@ -122,7 +150,7 @@ def stock_crypto():
                 stock = Stock.query.filter_by(ticker_symbol=symbol).first()
                 return render_template('stock-profile.html', data=data, user=user, stock=stock)
             else:
-                stock = Stock(stock_name=data["name"], ticker_symbol=data["symbol"],region=region, stock_price=data["price"])
+                stock = Stock(stock_name=data["name"], ticker_symbol=data["symbol"],region=region,which_type=data["type"], stock_price=data["price"])
                 db.session.add(stock)
                 db.session.commit()
                 return render_template('stock-profile.html', data=data, user=user, stock=stock)
@@ -131,12 +159,12 @@ def stock_crypto():
                 crypto = Cryptocurrency.query.filter_by(ticker_symbol=symbol).first()
                 return render_template('stock-profile.html', data=data, user=user, crypto=crypto)
             else:
-                crypto = Cryptocurrency(crypto_name=data["name"], ticker_symbol=data["symbol"],region=region, crypto_price=data["price"])
+                crypto = Cryptocurrency(crypto_name=data["name"], ticker_symbol=data["symbol"],region=region,which_type=data["type"], crypto_price=data["price"])
                 db.session.add(crypto)
                 db.session.commit()
                 return render_template('stock-profile.html', data=data, user=user, crypto=crypto)
         elif data["type"] == "not found":
-            flash("Please put correct ticker symbol!", "error")
+            flash("Access denied", "error")
             return redirect(f'/users/{user.username}')
     else:
         return redirect(f'/users/{user.username}')
@@ -169,17 +197,18 @@ def add_stock():
 
 
 #API to delete/remove stock/crypto from users profile++++++++++
-@app.route('/users/profile/delete/<type>/<int:stock_id>', methods=['DELETE'])
-def delete_stock(type, stock_id):
-    stock = Stock.query.get_or_404(stock_id)
-    crypto = Cryptocurrency.query.get_or_404(stock_id)
+@app.route('/users/profile/delete', methods=['DELETE'])
+def delete_stock():
+    response = request.json
     user = g.user
-    if type == "stock":
-        User_stock.query.filter(User_stock.user_username==user.username, User_stock.stock_id==stock.id).delete()
+    if response["type"] == "stock":
+        remove_stock = User_stock.query.filter(User_stock.user_username==user.username, User_stock.stock_id==response["id"]).first()
+        db.session.delete(remove_stock)
         db.session.commit()
         return jsonify({"message": "stock deleted"})
-    elif type == "crypto":
-        User_cryptocurrency.query.filter(User_cryptocurrency.user_username==user.username, User_cryptocurrency.crypto_id==crypto.id).delete()
+    elif response["type"] == "crypto":
+        remove_crypto = User_cryptocurrency.query.filter(User_cryptocurrency.user_username==user.username, User_cryptocurrency.crypto_id==response["id"]).first()
+        db.session.delete(remove_crypto)
         db.session.commit()
         return jsonify({"message": "crypto deleted"})
 

@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block title %}stock page{% endblock %}
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark clearfix">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-between">
     <a class="navbar-brand" href="/users/{{user.username}}">Trade Screener</a>
-    <ul class="nav navbar-nav pull-right">
+    <ul class="nav navbar-nav">
       <li class="nav-item"><a class="nav-link" href="/users/{{user.username}}/profile">{{user.username}}</a></li>
       <li class="nav-item"><a class = "nav-link" href="/logout">Logout</a></li>
   </ul>
@@ -12,10 +12,176 @@
 {% for category, msg in get_flashed_messages(with_categories=true) %}
 <p class="{{category}}">{{ msg }}</p>
 {% endfor %}
+
+<div class="container">
+  <div class="row">
+    <div class="">
+      <table class="table table-dark text-center my-3">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Ticker Symbol</th>
+            <th scope="col">Region</th>
+            <th scope="col">Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {% if stock %}
+            <td class = "chartData-name-user" data-name="{{stock.stock_name}}">{{stock.stock_name}}</td>
+            <td class = "chartData-symbol-user" data-symbol="{{stock.ticker_symbol}}">{{stock.ticker_symbol}}</td>
+            <td class = "chartData-region-user" data-region="{{stock.region}}">{{stock.region}}</td>
+            <td class = "chartData-price-user" data-price="{{stock.price}}">{{stock.stock_price}}</td>
+            {% endif %}
+            {% if crypto %}
+            <td class = "chartData-name-user" data-name="{{crypto.crypto_name}}">{{crypto.crypto_name}}</td>
+            <td class = "chartData-symbol-user" data-symbol="{{crypto.ticker_symbol}}">{{crypto.ticker_symbol}}</td>
+            <td class = "chartData-region-user" data-region="{{crypto.region}}">{{crypto.region}}</td>
+            <td class = "chartData-price-user" data-price="{{crypto.crypto_price}}">{{crypto.crypto_price}}</td>
+            {% endif %}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+<div class="container">
+  <form action="" id="chart-form-user">
+    <label for="interval">Interval:</label>
+    <select name="interval" id="interval-user">
+      <option value="1m">1m</option>
+      <option value="2m">2m</option>
+      <option value="5m">5m</option>
+      <option value="15m">15m</option>
+      <option value="60m">60m</option>
+      <option value="1d">1d</option>
+    </select>
+
+      <label for="range">Range:</label>
+      <select name="range" id="range-user">
+        <option value="1d">1d</option>
+        <option value="5d">5d</option>
+        <option value="1mo">1mo</option>
+        <option value="3mo">3mo</option>
+        <option value="6mo">6mo</option>
+        <option value="1y">1y</option>
+        <option value="2y">2y</option>
+        <option value="5y">5y</option>
+        <option value="10y">10y</option>
+        <option value="ytd">ytd</option>
+        <option value="max">max</option>
+    </select>
+    <br><br>
+    <button class="btn btn-primary btn-md">Show Chart</button>
+  </form>
+</div>
+
+<div class="container my-2" id= "chart-user" style="background-color: white""></div>
+
+
 {% if stock %}
-<h3>{{stock.stock_name}}</h3>
+<div class="container my-5" id="summary-stock" style="background-color: #de8971;">
+  <h3 class="text-center">Summary</h3>
+  <p>{{stock_data["summary"]}}</p>
+</div>
+
+<div class="container my-5" id="complete-details-stock style="background-color: #de8971;"">
+  <div class="row">
+    <div class="col">
+      <h3>TITLES</h3>
+  {% for value in stock_data["company_details"]["titles"] %}
+  <p>{{value["title"]}}</p>
+  {% endfor %}
+    </div>
+    <div class="col">
+      <h3>LINKS</h3>
+      {% for value in stock_data["company_details"]["urls"] %}
+      <p><a href="{{value["edgarUrl"]}}">{{value["edgarUrl"]}}</a></p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="container text-center my-5" id="company-officers-stock" style="background-color: #de8971;">
+  <div class="row">
+    <div class="col">
+      <h3>NAMES</h3>
+  {% for value in stock_data["officers"] %}
+  <p>{{value["name"]}}</p>
+  {% endfor %}
+    </div>
+    <div class="col">
+      <h3>TITLES</h3>
+      {% for value in stock_data["officers"] %}
+      <p>{{value["title"]}}</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid text-center my-5" id="addrress-stock" style="background-color: #de8971;">
+  <h3>Full Address</h3>
+  <p>{{stock_data["address"]["address"]}}, {{stock_data["address"]["city"]}}, {{stock_data["address"]["state"]}}
+    ({{stock_data["address"]["zip"]}}), {{stock_data["address"]["country"]}}
+  </p>
+  <p>{{stock_data["address"]["industry"]}}</p>
+  <p>Website: {{stock_data["address"]["website"]}}, Phone: {{stock_data["address"]["phone"]}}</p>
+</div>
 {% endif %}
+
+
+
+
 {% if crypto %}
-<h3>{{crypto.crypto_name}}</h3>
+
+<div class="container" id="summary-crypto">
+  <h3 class="text-center">Summary</h3>
+  <p>{{crypto_data["summary"]}}</p>
+</div>
+
+<div class="container" id="complete-details-crypto">
+  <div class="row">
+    <div class="col">
+      <h3>TITLES</h3>
+  {% for value in crypto_data["company_details"]["titles"] %}
+  <p>{{value["title"]}}</p>
+  {% endfor %}
+    </div>
+    <div class="col">
+      <h3>LINKS</h3>
+      {% for value in crypto_data["company_details"]["urls"] %}
+      <p><a href="{{value["edgarUrl"]}}">{{value["edgarUrl"]}}</a></p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="container text-center" id="company-officers-crypto">
+  <div class="row">
+    <div class="col">
+      <h3>NAMES</h3>
+  {% for value in crypto_data["officers"] %}
+  <p>{{value["name"]}}</p>
+  {% endfor %}
+    </div>
+    <div class="col">
+      <h3>TITLES</h3>
+      {% for value in crypto_data["officers"] %}
+      <p>{{value["title"]}}</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+
+<div class="container text-center" id="addrress-crypto">
+  <h3>Full Address</h3>
+  <p>{{crypto_data["address"]["address"]}}, {{crypto_data["address"]["city"]}}, {{crypto_data["address"]["state"]}}
+    ({{crypto_data["address"]["zip"]}}), {{crypto_data["address"]["country"]}}
+  </p>
+  <p>{{crypto_data["address"]["industry"]}}</p>
+  <p>Website: {{crypto_data["address"]["website"]}}, Phone: {{crypto_data["address"]["phone"]}}</p>
+</div>
 {% endif %}
+
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}User Profile{% endblock %}
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-between">
     <a class="navbar-brand" href=/users/{{user.username}}>Trade Screener</a>
    
     <ul class="nav navbar-nav">
@@ -14,12 +14,12 @@
 <p class="{{category}}">{{ msg }}</p>
 {% endfor %}
 <div class="container text-center my-5">
-<h4>Name: <b>{{user.first_name}} {{user.last_name}}</b></h4>
-<h4>Username: <b>{{user.username}}</b></h4>
-<h4>Email Address: <b>{{user.email}}</b></h4>
-<h4>Stock's watchlist:</h4>
-<div class="container stock-detail">
-  <table class="table text-dark">
+<h4 class="text-dark">Name: <b>{{user.first_name}} {{user.last_name}}</b></h4>
+<h4 class="text-dark">Username: <b>{{user.username}}</b></h4>
+<h4 class="text-dark">Email Address: <b>{{user.email}}</b></h4>
+<h4 class="text-dark mb-3">Stock's watchlist:</h4>
+<div class="container stock-detail" style="background-color: #334443;">
+  <table class="table text-light">
     <thead>
       <tr>
         <th scope="col">Name</th>
@@ -27,10 +27,11 @@
       </tr>
     </thead>
     <tbody>
-      
+
+        
         {% for stock in stocks %}
         <tr>
-        <td><a href="/users/{{user.username}}/profile/{{stock.id}}">{{stock.stock_name}}</a></td>
+        <td><a href="/users/{{user.username}}/profile/{{stock.which_type}}/{{stock.id}}">{{stock.stock_name}}</a></td>
         <td>{{stock.ticker_symbol}}</td>
         </tr>
         {% endfor %}
@@ -38,7 +39,7 @@
         
         {% for crypto in cryptos %}
         <tr>
-        <td><a href="/users/{{user.username}}/profile/{{crypto.id}}">{{crypto.crypto_name}}</a></td>
+        <td><a href="/users/{{user.username}}/profile/{{crypto.which_type}}/{{crypto.id}}">{{crypto.crypto_name}}</a></td>
         <td>{{crypto.ticker_symbol}}</td>
         </tr>
         {% endfor %}

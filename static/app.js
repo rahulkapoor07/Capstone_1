@@ -18,29 +18,108 @@ function convertUnix(timestamp){
 
 
 // collects data using dataset attribute and pass that data in chart API++++++++++++++++++++++++++
-const nameData = document.querySelector('.chartData-name').dataset.name;
-const symbolData = document.querySelector('.chartData-symbol').dataset.symbol;
-const regionData = document.querySelector('.chartData-region').dataset.region;
-const priceData = document.querySelector('.chartData-price').dataset.price;
-let intervalFinal;
-let rangeFinal;
+// const nameData = document.querySelector('.chartData-name').dataset.name;
+// const symbolData = document.querySelector('.chartData-symbol').dataset.symbol;
+// const regionData = document.querySelector('.chartData-region').dataset.region;
+// const priceData = document.querySelector('.chartData-price').dataset.price;
+// let intervalFinal;
+// let rangeFinal;
 
-document.getElementById('chart-form').addEventListener('submit', chartTime);
+const nameDataUser = document.querySelector('.chartData-name-user').dataset.name;
+const symbolDataUser = document.querySelector('.chartData-symbol-user').dataset.symbol;
+const regionDataUser = document.querySelector('.chartData-region-user').dataset.region;
+const priceDataUser = document.querySelector('.chartData-price-user').dataset.price;
+let intervalFinalUser;
+let rangeFinalUser;
 
-async function chartTime(e){
+
+// document.getElementById('chart-form').addEventListener('submit', chartTime);
+document.getElementById('chart-form-user').addEventListener('submit', chartTimeUser);
+
+// async function chartTime(e){
+//     e.preventDefault();
+//     const interval = document.getElementById('interval').value;
+//     const range = document.getElementById('range').value;
+//     intervalFinal = interval;
+//     rangeFinal = range;
+//     const inputData = {
+//         method: 'GET',
+//         url: 'https://apidojo-yahoo-finance-v1.p.rapidapi.com/market/get-charts',
+//         params: {
+//           symbol: symbolData,
+//           interval: intervalFinal,
+//           range: rangeFinal,
+//           region: regionData
+//         },
+//         headers: {
+//           'x-rapidapi-key': '1485ec3af1msh7c54fae5d48e5cap1ef8c9jsn9f5c4864e654',
+//           'x-rapidapi-host': 'apidojo-yahoo-finance-v1.p.rapidapi.com'
+//         }
+//     };
+//     const chartData =await axios.request(inputData).then(function (response) {
+//         return {"closedPrice" : response.data.chart.result[0].indicators.quote[0].close,
+//             "timeStamop": response.data.chart.result[0].timestamp}
+//         }).catch(function (error) {
+//             console.error(error);
+//         });
+
+//     const yFormatted = chartData.timeStamop.map(t =>
+//         {return convertUnix(t)});
+//     showChart(chartData.closedPrice, yFormatted);  
+// }
+
+// function showChart(xdata, ydata){
+//     let element = document.getElementById('myChart');
+//     if (element){
+//         element.remove();
+//     }
+//     const chartDiv = document.getElementById('chart');
+//     const canvas = document.createElement('canvas');
+//     canvas.setAttribute('id','myChart');
+//     canvas.className = "chart-sizing"
+//     chartDiv.appendChild(canvas);
+//     const ctx = document.getElementById('myChart').getContext('2d');
+//     const myChart = new Chart(ctx, {
+//       type: 'line',
+//       data: {
+//           labels: ydata,
+//           datasets: [{
+//               label: 'Stock/Crypto Chart',
+//               data: xdata,
+//               backgroundColor: [
+//                   'rgba(255, 99, 132, 0.2)'
+//               ],
+//               borderColor: [
+//                   'rgba(255, 99, 132, 1)'
+//               ],
+//               borderWidth: 1
+//           }]
+//       },
+//       options: {
+//           scales: {
+//               y: {
+//                   beginAtZero: false
+//               }
+//           }
+//       }
+//   });
+// }
+
+// Users stock/crypto chart+++++++++++++++++
+async function chartTimeUser(e){
     e.preventDefault();
-    const interval = document.getElementById('interval').value;
-    const range = document.getElementById('range').value;
-    intervalFinal = interval;
-    rangeFinal = range;
+    const interval = document.getElementById('interval-user').value;
+    const range = document.getElementById('range-user').value;
+    intervalFinalUser = interval;
+    rangeFinalUser = range;
     const inputData = {
         method: 'GET',
         url: 'https://apidojo-yahoo-finance-v1.p.rapidapi.com/market/get-charts',
         params: {
-          symbol: symbolData,
-          interval: intervalFinal,
-          range: rangeFinal,
-          region: regionData
+          symbol: symbolDataUser,
+          interval: intervalFinalUser,
+          range: rangeFinalUser,
+          region: regionDataUser
         },
         headers: {
           'x-rapidapi-key': '1485ec3af1msh7c54fae5d48e5cap1ef8c9jsn9f5c4864e654',
@@ -56,19 +135,19 @@ async function chartTime(e){
 
     const yFormatted = chartData.timeStamop.map(t =>
         {return convertUnix(t)});
-    showChart(chartData.closedPrice, yFormatted);  
+    showChartUser(chartData.closedPrice, yFormatted);  
 }
 
-function showChart(xdata, ydata){
-    let element = document.getElementById('myChart');
+function showChartUser(xdata, ydata){
+    let element = document.getElementById('myChartUser');
     if (element){
         element.remove();
     }
-    const chartDiv = document.getElementById('chart');
+    const chartDiv = document.getElementById('chart-user');
     const canvas = document.createElement('canvas');
-    canvas.setAttribute('id','myChart');
+    canvas.setAttribute('id','myChartUser');
     chartDiv.appendChild(canvas);
-    const ctx = document.getElementById('myChart').getContext('2d');
+    const ctx = document.getElementById('myChartUser').getContext('2d');
     const myChart = new Chart(ctx, {
       type: 'line',
       data: {
@@ -95,12 +174,16 @@ function showChart(xdata, ydata){
   });
 }
 
+
 // Follow a stock pr crypto+++++++++++++++++
 
-const followForm = document.getElementById('follow-form').addEventListener('submit', followFunc);
+
 
 const marketData = {};
 let follow = false;
+
+document.getElementById('follow-form').addEventListener('submit', followFunc);
+// Form search function++++++
 function followFunc(e){
     e.preventDefault();
     follow = !follow;
@@ -114,8 +197,6 @@ function followFunc(e){
         btn.innerHTML = "<span>Following</span>";
         btn.className = "btn btn-primary btn-lg mt-3 py-2";
         btn.classList.toggle("unfollow");
-        console.log(marketData.id)
-        console.log(marketData.type)
         axios.post("/users/profile/add", {marketData}).then(res => {
             console.log(res)});
     }else {
@@ -123,7 +204,7 @@ function followFunc(e){
         btn.className = "btn btn-primary btn-lg mt-3 py-2";
         btn.classList.toggle("follow-cls");
         
-        axios.delete(`/users/profile/delete/${marketData.type}/${marketData.id}`).then(res =>{
+        axios.delete("/users/profile/delete", {data: marketData}).then(res =>{
             console.log(res);
         });
     }
