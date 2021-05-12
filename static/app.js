@@ -25,16 +25,13 @@ function convertUnix(timestamp){
 // let intervalFinal;
 // let rangeFinal;
 
-const nameDataUser = document.querySelector('.chartData-name-user').dataset.name;
-const symbolDataUser = document.querySelector('.chartData-symbol-user').dataset.symbol;
-const regionDataUser = document.querySelector('.chartData-region-user').dataset.region;
-const priceDataUser = document.querySelector('.chartData-price-user').dataset.price;
-let intervalFinalUser;
-let rangeFinalUser;
 
 
 // document.getElementById('chart-form').addEventListener('submit', chartTime);
-document.getElementById('chart-form-user').addEventListener('submit', chartTimeUser);
+if(document.getElementById('chart-form-user')){
+    document.getElementById('chart-form-user').addEventListener('submit', chartTimeUser);
+}
+// document.getElementById('chart-form-user').addEventListener('submit', chartTimeUser);
 
 // async function chartTime(e){
 //     e.preventDefault();
@@ -105,9 +102,17 @@ document.getElementById('chart-form-user').addEventListener('submit', chartTimeU
 //   });
 // }
 
+
 // Users stock/crypto chart+++++++++++++++++
 async function chartTimeUser(e){
     e.preventDefault();
+    // const nameDataUser = document.querySelector('.chartData-name-user').dataset.name;
+    const symbolDataUser = document.querySelector('.chartData-symbol-user').dataset.symbol;
+    const regionDataUser = document.querySelector('.chartData-region-user').dataset.region;
+    // const priceDataUser = document.querySelector('.chartData-price-user').dataset.price;
+    let intervalFinalUser;
+    let rangeFinalUser;
+
     const interval = document.getElementById('interval-user').value;
     const range = document.getElementById('range-user').value;
     intervalFinalUser = interval;
@@ -156,10 +161,10 @@ function showChartUser(xdata, ydata){
               label: 'Stock/Crypto Chart',
               data: xdata,
               backgroundColor: [
-                  'rgba(255, 99, 132, 0.2)'
+                  'rgba(54, 162, 235, 0.2)'
               ],
               borderColor: [
-                  'rgba(255, 99, 132, 1)'
+                  'rgba(54, 162, 235, 0.2))'
               ],
               borderWidth: 1
           }]
@@ -176,14 +181,10 @@ function showChartUser(xdata, ydata){
 
 
 // Follow a stock pr crypto+++++++++++++++++
-
-
-
+document.querySelector("#follow-me-form") && document.querySelector("#follow-me-form").addEventListener('submit', followFunc);; 
 const marketData = {};
 let follow = false;
 
-document.getElementById('follow-form').addEventListener('submit', followFunc);
-// Form search function++++++
 function followFunc(e){
     e.preventDefault();
     follow = !follow;
@@ -192,20 +193,63 @@ function followFunc(e){
     marketData["name"] = document.getElementById('hidden-name').value;
     marketData["region"] = document.getElementById('hidden-region').value;
     marketData["price"] = document.getElementById('hidden-price').value;
-    const btn = document.getElementById('follow-btn');
+    const btn = document.getElementById('follow-me-btn');
     if (follow){
         btn.innerHTML = "<span>Following</span>";
         btn.className = "btn btn-primary btn-lg mt-3 py-2";
         btn.classList.toggle("unfollow");
-        axios.post("/users/profile/add", {marketData}).then(res => {
+        axios.post("/api/users/profile/add", {marketData}).then(res => {
             console.log(res)});
     }else {
         btn.innerHTML = "<span>Follow</span>";
         btn.className = "btn btn-primary btn-lg mt-3 py-2";
         btn.classList.toggle("follow-cls");
         
-        axios.delete("/users/profile/delete", {data: marketData}).then(res =>{
+        axios.delete("/api/users/profile/delete", {data: marketData}).then(res =>{
             console.log(res);
         });
     }
+}
+
+// refresh button to update latest changes in stock or crypto+++++++++++++++
+document.querySelector('#refresh-form') && document.querySelector('#refresh-form').addEventListener('submit', refreshStockFunc);
+const updateData = {};
+
+function refreshStockFunc(e){
+    e.preventDefault();
+    updateData["username"] = document.getElementById('refresh-username').value;
+    updateData["id"] = document.getElementById('refresh-id').value;
+    updateData["type"] = document.getElementById('refresh-type').value;
+    updateData["name"] = document.getElementById('refresh-name').value;
+    updateData["symbol"] = document.getElementById('refresh-symbol').value;
+    updateData["region"] = document.getElementById('refresh-region').value;
+    axios.patch("/api/stock-crypto/refresh", {updateData})
+    .then(res=>{console.log(res)});
+    location.reload();
+    // document.getElementById('refresh-btn').addEventListener("load", ()=>{
+    //     console.log("page loaded");
+    // })
+}
+
+// remove stock or crypto from user's watchlist+++++++++++++
+function removebtns(){
+    if (document.querySelectorAll(".remove-form")){
+        const forms = document.querySelectorAll(".remove-form");
+        for (let form of forms){
+            form.addEventListener('submit', removeFunc);
+        }
+    }
+}
+
+removebtns();
+function removeFunc(e){
+    e.preventDefault();
+    const removeData = {}
+    removeData["id"] = e.target.children[0].value.split("-")[0]
+    removeData["type"] = e.target.children[0].value.split("-")[1]
+    // axios.delete("/api/users/profile/delete", {data: removeData}).then(res=>{
+    //     console.log(res);
+    e.target.parentElement.parentElement.remove()
+    
+    // });
 }

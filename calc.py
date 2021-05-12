@@ -45,38 +45,75 @@ def search_stock(symbol, region):
     }
 
     response = requests.request("GET", url, headers=headers, params=querystring)
-    titles = response.json()["secFilings"]["filings"]#["title"]
-    urls = response.json()["secFilings"]["filings"]#[""edgarUrl""]
-    summary = response.json()["assetProfile"]["longBusinessSummary"]
-    officers_details = response.json()["assetProfile"]["companyOfficers"]#["name"]["title"]
-    address_website = response.json()["assetProfile"]["website"]
-    address_zip = response.json()["assetProfile"]["zip"]
-    address_address = response.json()["assetProfile"]["address1"]
-    address_city = response.json()["assetProfile"]["city"]
-    address_phone = response.json()["assetProfile"]["phone"]
-    address_state = response.json()["assetProfile"]["state"]
-    address_country = response.json()["assetProfile"]["country"]
-    address_industry = response.json()["assetProfile"]["industry"]
-
-    address = {"address": address_address, "city" : address_city, "state": address_state,
-        "zip" : address_zip, "country" : address_country, "industry" : address_industry,
-        "website": address_website, "phone": address_phone}
-    
-    company_details = {"titles": titles, "urls": urls}
 
     if response.text != '':
+        quoteSource = response.json()["price"]["quoteType"]
+        if quoteSource == "MUTUALFUND":
+            return {"type": "not found"}
+
+        if "filings" in response.json()["secFilings"]:
+            titles_urls = response.json()["secFilings"]["filings"]#["title"]
+            # urls = response.json()["secFilings"]["filings"]#[""edgarUrl""]
+        else:
+            titles_urls= ["titles and URLs not found"]
+        if "state" in response.json()["assetProfile"]:
+            address_state = response.json()["assetProfile"]["state"]
+        else:
+            address_state = ["state not found"]
+        
+        if "longBusinessSummary" in response.json()["assetProfile"]:
+            summary = response.json()["assetProfile"]["longBusinessSummary"]
+        if "description" in response.json()["assetProfile"]:
+            summary = response.json()["assetProfile"]["description"]
+        officers_details = response.json()["assetProfile"]["companyOfficers"]#["name"]["title"]
+
+        if "website" in response.json()["assetProfile"]:
+            address_website = response.json()["assetProfile"]["website"]
+        else:
+            address_website = ["website not found"]
+        if "zip" in response.json()["assetProfile"]:
+            address_zip = response.json()["assetProfile"]["zip"]
+        else:
+            address_zip = ["zip not found"]
+        if "address1" in response.json()["assetProfile"]:
+            address_address = response.json()["assetProfile"]["address1"]
+        else:
+            address_address = ["address not found"]
+        if "city" in response.json()["assetProfile"]:
+            address_city = response.json()["assetProfile"]["city"]
+        else:
+            address_city = ["city not found"]
+        if "phone" in response.json()["assetProfile"]:
+            address_phone = response.json()["assetProfile"]["phone"]
+        else:
+            address_phone = ["phone not found"]
+        if "country" in response.json()["assetProfile"]:
+            address_country = response.json()["assetProfile"]["country"]
+        else:
+            address_country = ["country not found"]
+        if "industry" in response.json()["assetProfile"]:
+            address_industry = response.json()["assetProfile"]["industry"]
+        else:
+            address_industry = ["industry not found"]
+
+        address = {"address": address_address, "city" : address_city, "state": address_state,
+            "zip" : address_zip, "country" : address_country, "industry" : address_industry,
+            "website": address_website, "phone": address_phone}
+        
+        # company_details = {"titles": titles, "urls": urls}
+
         quoteSource = response.json()["price"]["quoteType"]
         if quoteSource == "CRYPTOCURRENCY":
             crypto_price = response.json()["price"]["regularMarketPrice"]["raw"]
             crypto_name = response.json()["price"]["shortName"]
             return {"type" : "crypto", "name" : crypto_name, "symbol" : symbol, "region" : region, "price" : crypto_price,
-            "address": address, "officers": officers_details, "company_details":company_details, "summary": summary}
+            "address": address, "officers": officers_details, "company_details":titles_urls, "summary": summary}
         elif quoteSource == "EQUITY":
             marketOpenPrice = response.json()["price"]["regularMarketPrice"]["raw"]
             stock_name = response.json()["price"]["shortName"]
             return {"type" : "stock", "name" : stock_name, "symbol" : symbol, "region" : region, "price" : marketOpenPrice,
-            "address": address, "officers": officers_details, "company_details":company_details, "summary": summary}
+            "address": address, "officers": officers_details, "company_details":titles_urls, "summary": summary}
         else:
-            return ["not found", "not found", "not found"]
+            return {"type" : "not found"}
     else:
         return {"type" : "not found"}

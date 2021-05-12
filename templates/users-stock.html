@@ -15,7 +15,7 @@
 
 <div class="container">
   <div class="row">
-    <div class="">
+    <div class="col-10">
       <table class="table table-dark text-center my-3">
         <thead>
           <tr>
@@ -43,11 +43,41 @@
         </tbody>
       </table>
     </div>
+    <div class="col-2">
+      {% if stock %}
+      <form class="mt-3" id="refresh-form">
+        <input type="hidden" id="refresh-username" value="{{user.username}}">
+        <input type="hidden" id="refresh-id" value="{{stock.id}}">
+        <input type="hidden" id="refresh-type" value="{{stock.which_type}}">
+        <input type="hidden" id="refresh-name" value="{{stock.stock_name}}">
+        <input type="hidden" id="refresh-symbol" value="{{stock.ticker_symbol}}">
+        <input type="hidden" id="refresh-region" value="{{stock.region}}">
+        <button class="btn btn-success btn-lg justify-content-end" id="refresh-btn">Refresh</button>
+      </form>
+      {% endif %}
+      {% if crypto %}
+      <form class="mt-3" id="refresh-form">
+        <input type="hidden" id="refresh-username" value="{{user.username}}">
+        <input type="hidden" id="refresh-id" value="{{crypto.id}}">
+        <input type="hidden" id="refresh-type" value="{{crypto.which_type}}">
+        <input type="hidden" id="refresh-name" value="{{crypto.crypto_name}}">
+        <input type="hidden" id="refresh-symbol" value="{{crypto.ticker_symbol}}">
+        <input type="hidden" id="refresh-region" value="{{crypto.region}}">
+        <button class="btn btn-success btn-lg justify-content-end" id="refresh-btn">Refresh</button>
+
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+
+
 
 
 <div class="container">
   <form action="" id="chart-form-user">
-    <label for="interval">Interval:</label>
+    <label class="text-light" for="interval">Interval:</label>
     <select name="interval" id="interval-user">
       <option value="1m">1m</option>
       <option value="2m">2m</option>
@@ -57,7 +87,7 @@
       <option value="1d">1d</option>
     </select>
 
-      <label for="range">Range:</label>
+      <label class="text-light" for="range">Range:</label>
       <select name="range" id="range-user">
         <option value="1d">1d</option>
         <option value="5d">5d</option>
@@ -79,30 +109,37 @@
 <div class="container my-2" id= "chart-user" style="background-color: white""></div>
 
 
+
+<!-- Stock/crypto data -->
 {% if stock %}
-<div class="container my-5" id="summary-stock" style="background-color: #de8971;">
+<div class="container my-5 p-3" id="summary-stock" style="background-color: #87a7b3;">
   <h3 class="text-center">Summary</h3>
   <p>{{stock_data["summary"]}}</p>
 </div>
 
-<div class="container my-5" id="complete-details-stock style="background-color: #de8971;"">
+<!-- titles and links -->
+<div class="container my-5" id="complete-details-stock" style="background-color: #87a7b3;">
   <div class="row">
-    <div class="col">
-      <h3>TITLES</h3>
-  {% for value in stock_data["company_details"]["titles"] %}
-  <p>{{value["title"]}}</p>
-  {% endfor %}
+    <div class="col-md-6">
+      <h3 class="text-center">Titles</h3>
     </div>
-    <div class="col">
-      <h3>LINKS</h3>
-      {% for value in stock_data["company_details"]["urls"] %}
-      <p><a href="{{value["edgarUrl"]}}">{{value["edgarUrl"]}}</a></p>
-      {% endfor %}
+    <div class="col-md-6">
+      <h3 class="text-center">Links</h3>
     </div>
   </div>
+  {% for value in stock_data["company_details"] %}
+  <div class="row">
+    <div class="col-md-6">
+      <p>{{value["title"]}}</p>
+    </div>
+    <div class="col-md-6">
+      <p><a style="color: red;" href="">{{value["edgarUrl"]}}</a></p>
+    </div>
+  </div>
+  {% endfor %}
 </div>
 
-<div class="container text-center my-5" id="company-officers-stock" style="background-color: #de8971;">
+<div class="container text-center my-5 p-3" id="company-officers-stock" style="background-color: #87a7b3;">
   <div class="row">
     <div class="col">
       <h3>NAMES</h3>
@@ -119,12 +156,12 @@
   </div>
 </div>
 
-<div class="container-fluid text-center my-5" id="addrress-stock" style="background-color: #de8971;">
+<div class="container-fluid text-center my-5 p-3" id="addrress-stock" style="background-color: #87a7b3;">
   <h3>Full Address</h3>
   <p>{{stock_data["address"]["address"]}}, {{stock_data["address"]["city"]}}, {{stock_data["address"]["state"]}}
     ({{stock_data["address"]["zip"]}}), {{stock_data["address"]["country"]}}
   </p>
-  <p>{{stock_data["address"]["industry"]}}</p>
+  <p>Industry: {{stock_data["address"]["industry"]}}</p>
   <p>Website: {{stock_data["address"]["website"]}}, Phone: {{stock_data["address"]["phone"]}}</p>
 </div>
 {% endif %}
@@ -134,12 +171,13 @@
 
 {% if crypto %}
 
-<div class="container" id="summary-crypto">
+<div class="container my-5 p-3" id="summary-crypto" style="background-color: #87a7b3;">
   <h3 class="text-center">Summary</h3>
   <p>{{crypto_data["summary"]}}</p>
 </div>
 
-<div class="container" id="complete-details-crypto">
+<div class="container my-5" id="complete-details-crypto" style="background-color: #87a7b3;">
+  
   <div class="row">
     <div class="col">
       <h3>TITLES</h3>
@@ -150,13 +188,13 @@
     <div class="col">
       <h3>LINKS</h3>
       {% for value in crypto_data["company_details"]["urls"] %}
-      <p><a href="{{value["edgarUrl"]}}">{{value["edgarUrl"]}}</a></p>
+      <p><a style="color: red;" href="{{value["edgarUrl"]}}">{{value["edgarUrl"]}}</a></p>
       {% endfor %}
     </div>
   </div>
 </div>
 
-<div class="container text-center" id="company-officers-crypto">
+<div class="container text-center my-5 p-3" id="company-officers-crypto" style="background-color: #87a7b3;">
   <div class="row">
     <div class="col">
       <h3>NAMES</h3>
@@ -174,7 +212,7 @@
 </div>
 
 
-<div class="container text-center" id="addrress-crypto">
+<div class="container-fluid text-center my-5 p-3" id="addrress-crypto" style="background-color: #87a7b3;">
   <h3>Full Address</h3>
   <p>{{crypto_data["address"]["address"]}}, {{crypto_data["address"]["city"]}}, {{crypto_data["address"]["state"]}}
     ({{crypto_data["address"]["zip"]}}), {{crypto_data["address"]["country"]}}
@@ -183,5 +221,4 @@
   <p>Website: {{crypto_data["address"]["website"]}}, Phone: {{crypto_data["address"]["phone"]}}</p>
 </div>
 {% endif %}
-
 {% endblock %}

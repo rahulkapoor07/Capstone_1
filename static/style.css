@@ -6,7 +6,10 @@
 }
 
 body{
-    background-image: url("https://images.unsplash.com/photo-1620111975795-d98deff3ca89?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80");
+    background-image: url("https://images.unsplash.com/photo-1610486458571-3c2e1b28cd16?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=667&q=80");
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: 100%;
 }
 
 #summary-stock #complete-details-stock #company-offices-stock #address-stock{
@@ -17,7 +20,7 @@ body{
     background-color: #e2703a;
 } */
 .success {
-    color: green;
+    color: white;
     font-size: 1.5rem;
 }
 
@@ -32,6 +35,12 @@ body{
     height: 400px;
 }
 
+#refresh-btn:hover {
+    background-color: white;
+    outline: green;
+    color: green;
+}
+
 .unfollow:hover {
     background-color: white;
     outline: blue;
@@ -41,6 +50,11 @@ body{
     background-color: white;
     outline: blue;
     color: blue;
+}
+.remove-btn:hover{
+    background-color: white;
+    outline: red;
+    color: red;
 }
 
 .unfollow:hover span {

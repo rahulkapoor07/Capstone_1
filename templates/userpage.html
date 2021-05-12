@@ -26,21 +26,21 @@
 {% endfor %}
 
 <div class="container head">
-    <h1 class="text-center text-dark ml-5">{{user.first_name}} {{user.last_name}}</h1>
+    <h1 class="text-center text-light ml-5">{{user.first_name}} {{user.last_name}}</h1>
 </div>
 
 
 <div class="container">
     <div class="row my-5">
         <div class="col-md">
-            <h2 class="text-center">Trending Stocks</h2>
+            <h2 class="text-center text-light">Trending Stocks</h2>
               <table class="table table-secondary">
                 <thead>
                   <tr>
                     <th scope="col">Name</th>
                     <th scope="col">Symbol</th>
                     <th scope="col">Price</th>
-                    <th scope="col">ADD</th>
+                    <!-- <th scope="col">ADD</th> -->
                   </tr>
                 </thead>
                 <tbody>
@@ -50,15 +50,13 @@
                     <td>{{stock["name"]}}</td>
                     <td><b>{{stock["symbol"]}}</b></td>
                     <td><b>{{stock["price"]}}</b></td>
-                    <td><form action="" class=follow-form-stock>
-                      <input type="hidden" class="hidden-id-stock" value="{{stock.id}}">
+                    <!-- <td><form action="" class="follow-form-stock-trending">
                       <input type="hidden" class="hidden-type-stock" value="stock">
-                      <input type="hidden" class="hidden-name-stock" value="{{stock.stock_name}}">
-                      <input type="hidden" class="hidden-symbol-stock" value="{{stock.ticker_symbol}}">
-                      <input type="hidden" class="hidden-region-stock" value="{{stock.region}}">
-                      <input type="hidden" class="hidden-price-stock" value="{{stock.stock_price}}">
+                      <input type="hidden" class="hidden-name-stock" value="{{stock['name']}}">
+                      <input type="hidden" class="hidden-symbol-stock" value="{{stock['symbol']}}">
+                      <input type="hidden" class="hidden-price-stock" value="{{stock['price']}}">
                       <button class="btn btn-primary btn-lg py-1 follow-cls follow-btn-stock" ><span>Follow</span></button>
-                    </form></td>
+                    </form></td> -->
                   </tr>
                   {% endfor %}
                   
@@ -66,14 +64,14 @@
               </table>
           </div>
           <div class="col-md">
-              <h2 class="text-center">Trending Crypto</h2>
+              <h2 class="text-center text-light">Trending Crypto</h2>
               <table class="table table-secondary">
                   <thead>
                     <tr>
                       <th scope="col">Name</th>
                       <th scope="col">Symbol</th>
                       <th scope="col">Price</th>
-                      <th scope="col">ADD</th>
+                      <!-- <th scope="col">ADD</th> -->
                     </tr>
                   </thead>
                   <tbody>
@@ -82,7 +80,7 @@
                     <td>{{crypto["name"]}}</td>
                     <td><b>{{crypto["symbol"]}}</b></td>
                     <td><b>{{crypto["price"]}}</b></td>
-                    <td><form action="" class="follow-form-crypto">
+                    <!-- <td><form action="" class="follow-form-crypto-trending">
                       <input type="hidden" class="hidden-id-crypto" value="{{crypto.id}}">
                       <input type="hidden" class="hidden-type-crypto" value="crypto">
                       <input type="hidden" class="hidden-name-crypto" value="{{crypto.crypto_name}}">
@@ -90,7 +88,7 @@
                       <input type="hidden" class="hidden-region-crypto" value="{{crypto.region}}">
                       <input type="hidden" class="hidden-price-crypto" value="{{crypto.crypto_price}}">
                       <button class="btn btn-primary btn-lg py-1 follow-cls follow-btn-crypto" ><span>Follow</span></button>
-                    </form></td>
+                    </form></td> -->
                   </tr>
                   {% endfor %}
                   </tbody>

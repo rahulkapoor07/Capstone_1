@@ -90,21 +90,19 @@ def user_page(username):
         user = User.query.get(username)
         form = TickerForm()
         [stocks, cryptos] = popular_ticker()
-        # stocks_db = []
-        # cryptos = []
         # for stock in stocks:
-        #     if Stock.query.filter_by(ticker_symbol=stock["symbol"]).first():
-        #         return redirect(f'/users/{user.username}')
+        #     if Stock.query.filter_by(stock_name=stock["name"]).first():
+        #         continue
         #     else:
-        #         stocks_db += Stock(stock_name=stock["name"], ticker_symbol=stock["symbol"], region=stock["region"], stock_price=stock["price"])
-        #         db.session.add(stocks_db)
+        #         stock_db = Stock(stock_name=stock["name"], ticker_symbol=stock["symbol"], region=stock["region"],which_type="stock", stock_price=stock["price"])
+        #         db.session.add(stock_db)
         #         db.session.commit()
         # for crypto in cryptos:
-        #     if Cryptocurrency.query.filter_by(ticker_symbol=crypto["symbol"]).first():
-        #         return redirect(f'/users/{user.username}')
+        #     if Cryptocurrency.query.filter_by(crypto_name=crypto["name"]).first():
+        #         continue
         #     else:
-        #         cryptos_db += Cryptocurrency(crypto_name=crypto["name"], ticker_symbol=crypto["symbol"], region=crypto["region"], crypto_price=crypto["price"])
-        #         db.session.add(crypto)
+        #         crypto_db = Cryptocurrency(crypto_name=crypto["name"], ticker_symbol=crypto["symbol"], region=crypto["region"],which_type="crypto", crypto_price=crypto["price"])
+        #         db.session.add(crypto_db)
         #         db.session.commit()
         return render_template('userpage.html', user=user, stocks=stocks, cryptos=cryptos, form=form)
             
@@ -128,10 +126,12 @@ def stock_details(username,which_type, stock_id):
     if which_type == "stock":
         stock = Stock.query.get_or_404(stock_id)
         stock_data = search_stock(stock.ticker_symbol, stock.region)
+        flash("Please click refresh button to get latest price of stock!", "success")
         return render_template('users-stock.html',user=user, stock=stock, stock_data=stock_data)
     else:
         crypto = Cryptocurrency.query.get_or_404(stock_id)
         crypto_data = search_stock(crypto.ticker_symbol, crypto.region)
+        flash("Please click refresh button to get latest price of cryptocurrency!", "success")
         return render_template('users-stock.html',user=user, crypto=crypto, crypto_data=crypto_data)
 
 @app.route('/market/stock-crypto/search', methods=['GET', 'POST'])
@@ -148,30 +148,30 @@ def stock_crypto():
         if data["type"] == "stock":
             if Stock.query.filter_by(ticker_symbol=symbol).first():
                 stock = Stock.query.filter_by(ticker_symbol=symbol).first()
-                return render_template('stock-profile.html', data=data, user=user, stock=stock)
+                return render_template('stock-profile.html', data=data, user=user,stock_data=data, stock=stock)
             else:
                 stock = Stock(stock_name=data["name"], ticker_symbol=data["symbol"],region=region,which_type=data["type"], stock_price=data["price"])
                 db.session.add(stock)
                 db.session.commit()
-                return render_template('stock-profile.html', data=data, user=user, stock=stock)
+                return render_template('stock-profile.html', data=data, user=user,stock_data=data, stock=stock)
         elif data["type"] == "crypto":
             if Cryptocurrency.query.filter_by(ticker_symbol=symbol).first():
                 crypto = Cryptocurrency.query.filter_by(ticker_symbol=symbol).first()
-                return render_template('stock-profile.html', data=data, user=user, crypto=crypto)
+                return render_template('stock-profile.html', data=data, user=user,crypto_data=data, crypto=crypto)
             else:
                 crypto = Cryptocurrency(crypto_name=data["name"], ticker_symbol=data["symbol"],region=region,which_type=data["type"], crypto_price=data["price"])
                 db.session.add(crypto)
                 db.session.commit()
-                return render_template('stock-profile.html', data=data, user=user, crypto=crypto)
+                return render_template('stock-profile.html', data=data, user=user,crypto_data=data, crypto=crypto)
         elif data["type"] == "not found":
-            flash("Access denied", "error")
+            flash("Please insert correct ticker symbol for stocks and cryptocurrencies only!", "error")
             return redirect(f'/users/{user.username}')
     else:
         return redirect(f'/users/{user.username}')
 
 
 # API to add stock/crypto into users profile++++++++++++++++
-@app.route("/users/profile/add", methods=['POST'])
+@app.route("/api/users/profile/add", methods=['POST'])
 def add_stock():
     response = request.json
     market_data = response["marketData"]
@@ -197,7 +197,7 @@ def add_stock():
 
 
 #API to delete/remove stock/crypto from users profile++++++++++
-@app.route('/users/profile/delete', methods=['DELETE'])
+@app.route('/api/users/profile/delete', methods=['DELETE'])
 def delete_stock():
     response = request.json
     user = g.user
@@ -211,6 +211,33 @@ def delete_stock():
         db.session.delete(remove_crypto)
         db.session.commit()
         return jsonify({"message": "crypto deleted"})
+
+#API to change price in database+++++++++++++++++
+# @app.route('/users/profile/patch', methods=['PATCH'])
+# def patch_stock():
+
+# API to refresh and stock or crypto prices in databases
+@app.route('/api/stock-crypto/refresh', methods=['PATCH'])
+def refreshPrice():
+    response = request.json
+    data = response["updateData"]
+    market_data = search_stock(data["symbol"], data["region"])
+    # user = User.query.get(data["username"])
+    if data["type"] == "stock":
+        stock = Stock.query.get_or_404(data["id"])
+        stock.stock_price = market_data.get("price", stock.stock_price)
+        db.session.add(stock)
+        db.session.commit()
+        # print("******************")
+        # print(stock.id, stock.stock_name, stock.stock_price, stock)
+
+    if data["type"] == "crypto":
+        crypto = Cryptocurrency.query.get_or_404(data["id"])
+        crypto.crypto_price = market_data["price"]
+        db.session.add(crypto)
+        db.session.commit()
+    return jsonify(msg="updated")
+    
 
 
 

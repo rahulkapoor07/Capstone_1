@@ -14,16 +14,17 @@
 <p class="{{category}}">{{ msg }}</p>
 {% endfor %}
 <div class="container text-center my-5">
-<h4 class="text-dark">Name: <b>{{user.first_name}} {{user.last_name}}</b></h4>
-<h4 class="text-dark">Username: <b>{{user.username}}</b></h4>
-<h4 class="text-dark">Email Address: <b>{{user.email}}</b></h4>
-<h4 class="text-dark mb-3">Stock's watchlist:</h4>
+<h4 class="text-light">Name: <b>{{user.first_name}} {{user.last_name}}</b></h4>
+<h4 class="text-light">Username: <b>{{user.username}}</b></h4>
+<h4 class="text-light">Email Address: <b>{{user.email}}</b></h4>
+<h4 class="text-light mb-3">Stock's watchlist:</h4>
 <div class="container stock-detail" style="background-color: #334443;">
   <table class="table text-light">
     <thead>
       <tr>
         <th scope="col">Name</th>
         <th scope="col">Ticker Symbol</th>
+        <th scope="col">Remove</th>
       </tr>
     </thead>
     <tbody>
@@ -33,6 +34,13 @@
         <tr>
         <td><a href="/users/{{user.username}}/profile/{{stock.which_type}}/{{stock.id}}">{{stock.stock_name}}</a></td>
         <td>{{stock.ticker_symbol}}</td>
+        <td>
+          <form action="" class="remove-form">
+            <!-- <input type="hidden" class="remove-username" value="{{user.username}}"> -->
+            <input type="hidden" class="remove-stock-id" value="{{stock.id}}-{{stock.which_type}}">
+            <button class="btn btn-danger btn-lg remove-btn">Remove</button>
+          </form>
+        </td>
         </tr>
         {% endfor %}
         
@@ -41,6 +49,13 @@
         <tr>
         <td><a href="/users/{{user.username}}/profile/{{crypto.which_type}}/{{crypto.id}}">{{crypto.crypto_name}}</a></td>
         <td>{{crypto.ticker_symbol}}</td>
+        <td>
+          <form action="" class="remove-form">
+            <!-- <input type="hidden" class="remove-username" value="{{user.username}}"> -->
+            <input type="hidden" class="remove-crypto-id" value="{{crypto.id}}-{{crypto.which_type}}">
+            <button class="btn btn-danger btn-lg remove-btn">Remove</button>
+          </form>
+        </td>
         </tr>
         {% endfor %}
       
