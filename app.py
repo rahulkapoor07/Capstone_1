@@ -90,20 +90,6 @@ def user_page(username):
         user = User.query.get(username)
         form = TickerForm()
         [stocks, cryptos] = popular_ticker()
-        # for stock in stocks:
-        #     if Stock.query.filter_by(stock_name=stock["name"]).first():
-        #         continue
-        #     else:
-        #         stock_db = Stock(stock_name=stock["name"], ticker_symbol=stock["symbol"], region=stock["region"],which_type="stock", stock_price=stock["price"])
-        #         db.session.add(stock_db)
-        #         db.session.commit()
-        # for crypto in cryptos:
-        #     if Cryptocurrency.query.filter_by(crypto_name=crypto["name"]).first():
-        #         continue
-        #     else:
-        #         crypto_db = Cryptocurrency(crypto_name=crypto["name"], ticker_symbol=crypto["symbol"], region=crypto["region"],which_type="crypto", crypto_price=crypto["price"])
-        #         db.session.add(crypto_db)
-        #         db.session.commit()
         return render_template('userpage.html', user=user, stocks=stocks, cryptos=cryptos, form=form)
             
 
@@ -213,10 +199,7 @@ def delete_stock():
         return jsonify({"message": "crypto deleted"})
 
 #API to change price in database+++++++++++++++++
-# @app.route('/users/profile/patch', methods=['PATCH'])
-# def patch_stock():
 
-# API to refresh and stock or crypto prices in databases
 @app.route('/api/stock-crypto/refresh', methods=['PATCH'])
 def refreshPrice():
     response = request.json
@@ -228,8 +211,6 @@ def refreshPrice():
         stock.stock_price = market_data.get("price", stock.stock_price)
         db.session.add(stock)
         db.session.commit()
-        # print("******************")
-        # print(stock.id, stock.stock_name, stock.stock_price, stock)
 
     if data["type"] == "crypto":
         crypto = Cryptocurrency.query.get_or_404(data["id"])
@@ -237,12 +218,3 @@ def refreshPrice():
         db.session.add(crypto)
         db.session.commit()
     return jsonify(msg="updated")
-    
-
-
-
-# @app.errorhandler(404)
-# def page_not_found(e):
-#     """404 NOT FOUND page."""
-
-#     return render_template('404.html'), 404

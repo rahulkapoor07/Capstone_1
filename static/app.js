@@ -1,5 +1,5 @@
 // Converts Unix timestamp values into HH:MM:SS format+++++++++++++++
-function convertUnix(timestamp){
+function convertUnix(range, timestamp){
     // Create a new JavaScript Date object based on the timestamp
     // multiplied by 1000 so that the argument is in milliseconds, not seconds.
     let date = new Date(timestamp * 1000);
@@ -11,105 +11,48 @@ function convertUnix(timestamp){
     let seconds = "0" + date.getSeconds();
 
     // Will display time in 10:30:23 format
+    if (range === "5d"){
+        const data = date.toLocaleString("en-US", {weekday: "long"});
+        return data;
+    }
+    if (range === "1mo" || range === "3mo" || range === "6mo" || range === "1y"){
+        const data = date.toLocaleString("en-US", {day: "numeric"});
+        const mon = date.toLocaleString("en-US", {month: "long"})
+        return `${mon.slice(0,3)} ${data}`;
+    }
+    if (range === "2y" || range === "5y" || range ==="10y" || range === "max"){
+        const mon = date.toLocaleString("en-US", {month: "long"})
+        const data = date.toLocaleString("en-US", {year: "numeric"});
+        return `${mon.slice(0,3)} ${data}`;
+    }
     let formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
 
     return formattedTime;
 }
+function skipNums(arr){
+    const final = [];
+    for (let i = 0; i < arr.length; i++){
+        if (final.includes(arr[i])){
+            arr[i] = " ";
+            final.push(arr[i]);
+        }
+        else{
+            final.push(arr[i]);
+        }
+    }
+    return final;
+}
 
-
-// collects data using dataset attribute and pass that data in chart API++++++++++++++++++++++++++
-// const nameData = document.querySelector('.chartData-name').dataset.name;
-// const symbolData = document.querySelector('.chartData-symbol').dataset.symbol;
-// const regionData = document.querySelector('.chartData-region').dataset.region;
-// const priceData = document.querySelector('.chartData-price').dataset.price;
-// let intervalFinal;
-// let rangeFinal;
-
-
-
-// document.getElementById('chart-form').addEventListener('submit', chartTime);
 if(document.getElementById('chart-form-user')){
     document.getElementById('chart-form-user').addEventListener('submit', chartTimeUser);
 }
-// document.getElementById('chart-form-user').addEventListener('submit', chartTimeUser);
-
-// async function chartTime(e){
-//     e.preventDefault();
-//     const interval = document.getElementById('interval').value;
-//     const range = document.getElementById('range').value;
-//     intervalFinal = interval;
-//     rangeFinal = range;
-//     const inputData = {
-//         method: 'GET',
-//         url: 'https://apidojo-yahoo-finance-v1.p.rapidapi.com/market/get-charts',
-//         params: {
-//           symbol: symbolData,
-//           interval: intervalFinal,
-//           range: rangeFinal,
-//           region: regionData
-//         },
-//         headers: {
-//           'x-rapidapi-key': '1485ec3af1msh7c54fae5d48e5cap1ef8c9jsn9f5c4864e654',
-//           'x-rapidapi-host': 'apidojo-yahoo-finance-v1.p.rapidapi.com'
-//         }
-//     };
-//     const chartData =await axios.request(inputData).then(function (response) {
-//         return {"closedPrice" : response.data.chart.result[0].indicators.quote[0].close,
-//             "timeStamop": response.data.chart.result[0].timestamp}
-//         }).catch(function (error) {
-//             console.error(error);
-//         });
-
-//     const yFormatted = chartData.timeStamop.map(t =>
-//         {return convertUnix(t)});
-//     showChart(chartData.closedPrice, yFormatted);  
-// }
-
-// function showChart(xdata, ydata){
-//     let element = document.getElementById('myChart');
-//     if (element){
-//         element.remove();
-//     }
-//     const chartDiv = document.getElementById('chart');
-//     const canvas = document.createElement('canvas');
-//     canvas.setAttribute('id','myChart');
-//     canvas.className = "chart-sizing"
-//     chartDiv.appendChild(canvas);
-//     const ctx = document.getElementById('myChart').getContext('2d');
-//     const myChart = new Chart(ctx, {
-//       type: 'line',
-//       data: {
-//           labels: ydata,
-//           datasets: [{
-//               label: 'Stock/Crypto Chart',
-//               data: xdata,
-//               backgroundColor: [
-//                   'rgba(255, 99, 132, 0.2)'
-//               ],
-//               borderColor: [
-//                   'rgba(255, 99, 132, 1)'
-//               ],
-//               borderWidth: 1
-//           }]
-//       },
-//       options: {
-//           scales: {
-//               y: {
-//                   beginAtZero: false
-//               }
-//           }
-//       }
-//   });
-// }
 
 
 // Users stock/crypto chart+++++++++++++++++
 async function chartTimeUser(e){
     e.preventDefault();
-    // const nameDataUser = document.querySelector('.chartData-name-user').dataset.name;
     const symbolDataUser = document.querySelector('.chartData-symbol-user').dataset.symbol;
     const regionDataUser = document.querySelector('.chartData-region-user').dataset.region;
-    // const priceDataUser = document.querySelector('.chartData-price-user').dataset.price;
     let intervalFinalUser;
     let rangeFinalUser;
 
@@ -138,8 +81,8 @@ async function chartTimeUser(e){
             console.error(error);
         });
 
-    const yFormatted = chartData.timeStamop.map(t =>
-        {return convertUnix(t)});
+    let yFormatted = chartData.timeStamop.map(t =>
+        {return convertUnix(inputData.params.range,t)});
     showChartUser(chartData.closedPrice, yFormatted);  
 }
 
@@ -225,10 +168,7 @@ function refreshStockFunc(e){
     updateData["region"] = document.getElementById('refresh-region').value;
     axios.patch("/api/stock-crypto/refresh", {updateData})
     .then(res=>{console.log(res)});
-    location.reload();
-    // document.getElementById('refresh-btn').addEventListener("load", ()=>{
-    //     console.log("page loaded");
-    // })
+    setTimeout(()=>{location.reload()}, 2000);
 }
 
 // remove stock or crypto from user's watchlist+++++++++++++
@@ -247,9 +187,9 @@ function removeFunc(e){
     const removeData = {}
     removeData["id"] = e.target.children[0].value.split("-")[0]
     removeData["type"] = e.target.children[0].value.split("-")[1]
-    // axios.delete("/api/users/profile/delete", {data: removeData}).then(res=>{
-    //     console.log(res);
-    e.target.parentElement.parentElement.remove()
+    axios.delete("/api/users/profile/delete", {data: removeData}).then(res=>{
+        // console.log(res);
+    e.target.parentElement.parentElement.remove();
     
-    // });
+    });
 }

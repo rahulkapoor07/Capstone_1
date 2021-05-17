@@ -53,7 +53,6 @@ def search_stock(symbol, region):
 
         if "filings" in response.json()["secFilings"]:
             titles_urls = response.json()["secFilings"]["filings"]#["title"]
-            # urls = response.json()["secFilings"]["filings"]#[""edgarUrl""]
         else:
             titles_urls= ["titles and URLs not found"]
         if "state" in response.json()["assetProfile"]:
@@ -99,8 +98,6 @@ def search_stock(symbol, region):
         address = {"address": address_address, "city" : address_city, "state": address_state,
             "zip" : address_zip, "country" : address_country, "industry" : address_industry,
             "website": address_website, "phone": address_phone}
-        
-        # company_details = {"titles": titles, "urls": urls}
 
         quoteSource = response.json()["price"]["quoteType"]
         if quoteSource == "CRYPTOCURRENCY":
