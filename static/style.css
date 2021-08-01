@@ -5,6 +5,17 @@
     }
 }
 
+@media (max-width: 900px) {
+    body{
+        background-image: url("https://images.unsplash.com/photo-1610486458571-3c2e1b28cd16?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=667&q=80");
+        background-attachment: scroll;
+        background-repeat: repeat-x;
+        background-size: 100%;
+        /* background-position-y: 38%; */
+    }
+    
+}
+
 body{
     background-image: url("https://images.unsplash.com/photo-1610486458571-3c2e1b28cd16?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=667&q=80");
     background-attachment: fixed;

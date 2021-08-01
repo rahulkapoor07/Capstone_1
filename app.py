@@ -3,9 +3,9 @@ from models import db, connect_db, User, Stock, Cryptocurrency, User_stock, User
 from flask_debugtoolbar import DebugToolbarExtension
 from forms import SignupForm, LoginForm, TickerForm
 from calc import popular_ticker, search_stock
-from sqlalchemy.exc import IntegrityError
-from werkzeug.datastructures import MultiDict
-import sys
+# from sqlalchemy.exc import IntegrityError
+# from werkzeug.datastructures import MultiDict
+# import sys
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///stock_market_db'
@@ -60,7 +60,6 @@ def signup():
         username = form.username.data
         email = form.email.data
         password = form.password.data
-        # new_user = User.register(first_name, last_name, username, email, password)
         if User.query.filter_by(username=username).first():
             db.session.rollback()
             flash('Username already taken! Please try different username', "error")

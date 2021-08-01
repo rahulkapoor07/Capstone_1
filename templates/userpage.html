@@ -1,24 +1,29 @@
 {% extends 'base.html' %}
 {% block title %}User Page{% endblock %}
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-between">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark d-flex justify-content-between">
   <a class="navbar-brand" href="">Trade Screener</a>
-  <form class="form form-horizontal" action="/market/stock-crypto/search", method="POST">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <form class="form form-horizontal d-inline-flex p-2" action="/market/stock-crypto/search", method="POST">
     {{ form.hidden_tag() }}
     {% for field in form if field.widget.input_type != 'hidden' %}
-    <p>
-    {{ field(class_="form-control mr-sm-2") }}
+    <p class="mx-2">
+    {{ field(class_="form-control") }}
     {% for error in field.errors %}
         <span class="form-text text-danger">{{ error }}</span>
     {% endfor %}
     {% endfor %}
     </p>
-    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-</form>
-  <ul class="nav navbar-nav pull-right">
+    <button class="btn btn-outline-success btn-md my-1 mx-3 my-sm-0 p text-center" style="height: 40px;" type="submit">Search</button>
+    </form>
+    <ul class="nav navbar-nav ml-auto p-10">
       <li class="nav-item"><a class="nav-link "text-capitalize" href="/users/{{user.username}}/profile">{{user.username}}</a></li>
       <li class="nav-item"><a class = "nav-link" href="/logout">Logout</a></li>
-  </ul>
+    </ul>
+  </div>
 </nav>
 
 {% for category, msg in get_flashed_messages(with_categories=true) %}
@@ -50,13 +55,7 @@
                     <td>{{stock["name"]}}</td>
                     <td><b>{{stock["symbol"]}}</b></td>
                     <td><b>{{stock["price"]}}</b></td>
-                    <!-- <td><form action="" class="follow-form-stock-trending">
-                      <input type="hidden" class="hidden-type-stock" value="stock">
-                      <input type="hidden" class="hidden-name-stock" value="{{stock['name']}}">
-                      <input type="hidden" class="hidden-symbol-stock" value="{{stock['symbol']}}">
-                      <input type="hidden" class="hidden-price-stock" value="{{stock['price']}}">
-                      <button class="btn btn-primary btn-lg py-1 follow-cls follow-btn-stock" ><span>Follow</span></button>
-                    </form></td> -->
+
                   </tr>
                   {% endfor %}
                   
@@ -71,7 +70,6 @@
                       <th scope="col">Name</th>
                       <th scope="col">Symbol</th>
                       <th scope="col">Price</th>
-                      <!-- <th scope="col">ADD</th> -->
                     </tr>
                   </thead>
                   <tbody>
@@ -80,15 +78,6 @@
                     <td>{{crypto["name"]}}</td>
                     <td><b>{{crypto["symbol"]}}</b></td>
                     <td><b>{{crypto["price"]}}</b></td>
-                    <!-- <td><form action="" class="follow-form-crypto-trending">
-                      <input type="hidden" class="hidden-id-crypto" value="{{crypto.id}}">
-                      <input type="hidden" class="hidden-type-crypto" value="crypto">
-                      <input type="hidden" class="hidden-name-crypto" value="{{crypto.crypto_name}}">
-                      <input type="hidden" class="hidden-symbol-crypto" value="{{crypto.ticker_symbol}}">
-                      <input type="hidden" class="hidden-region-crypto" value="{{crypto.region}}">
-                      <input type="hidden" class="hidden-price-crypto" value="{{crypto.crypto_price}}">
-                      <button class="btn btn-primary btn-lg py-1 follow-cls follow-btn-crypto" ><span>Follow</span></button>
-                    </form></td> -->
                   </tr>
                   {% endfor %}
                   </tbody>

@@ -21,8 +21,8 @@ class User(db.Model):
     email = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
 
-    stocks = db.relationship('Stock', secondary="users_stocks", backref="user")
-    cryptos = db.relationship('Cryptocurrency', secondary="users_cryptocurrencies", backref="user")
+    stocks = db.relationship('Stock', secondary="users_stocks",cascade="all, delete", backref="user")
+    cryptos = db.relationship('Cryptocurrency', secondary="users_cryptocurrencies",cascade="all, delete", backref="user")
 
     @classmethod
     def register(cls, first_name, last_name, username, email, password):
