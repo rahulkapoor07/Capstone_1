@@ -3,9 +3,7 @@ from models import db, connect_db, User, Stock, Cryptocurrency, User_stock, User
 from flask_debugtoolbar import DebugToolbarExtension
 from forms import SignupForm, LoginForm, TickerForm
 from calc import popular_ticker, search_stock
-# from sqlalchemy.exc import IntegrityError
-# from werkzeug.datastructures import MultiDict
-# import sys
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///stock_market_db'
@@ -13,7 +11,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-app.config['SECRET_KEY'] = "SECRET!"
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'SECRET!')
 debug = DebugToolbarExtension(app)
 
 connect_db(app)
