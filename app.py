@@ -6,7 +6,7 @@ from calc import popular_ticker, search_stock
 import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///stock_market_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql:///stock_market_db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 
@@ -16,6 +16,7 @@ debug = DebugToolbarExtension(app)
 
 connect_db(app)
 db.create_all()
+
 
 @app.before_request
 def add_user_to_g():
