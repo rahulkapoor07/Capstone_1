@@ -16,7 +16,7 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'SECRET!')
 debug = DebugToolbarExtension(app)
 
 connect_db(app)
-# db.create_all()
+db.create_all()
 
 
 @app.before_request
