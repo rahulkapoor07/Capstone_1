@@ -31,21 +31,20 @@
 {% endfor %}
 
 <div class="container head">
-    <h1 class="text-center text-light ml-5">{{user.first_name}} {{user.last_name}}</h1>
+    <h1 class="text-center text-dark">{{user.first_name}} {{user.last_name}}</h1>
 </div>
 
 
 <div class="container">
     <div class="row my-5">
         <div class="col-md">
-            <h2 class="text-center text-light">Trending Stocks</h2>
-              <table class="table table-secondary">
+            <h2 class="text-center text-dark">Trending Stocks</h2>
+              <table class="table table-secondary trending-table">
                 <thead>
                   <tr>
                     <th scope="col">Name</th>
                     <th scope="col">Symbol</th>
                     <th scope="col">Price</th>
-                    <!-- <th scope="col">ADD</th> -->
                   </tr>
                 </thead>
                 <tbody>
@@ -62,9 +61,12 @@
                 </tbody>
               </table>
           </div>
+
+
+          {% if cryptos %}
           <div class="col-md">
-              <h2 class="text-center text-light">Trending Crypto</h2>
-              <table class="table table-secondary">
+              <h2 class="text-center text-dark">Trending Crypto</h2>
+              <table class="table table-secondary trending-table">
                   <thead>
                     <tr>
                       <th scope="col">Name</th>
@@ -83,6 +85,7 @@
                   </tbody>
                 </table>
           </div>
+          {% endif %}
   </div>
 </div>
 
