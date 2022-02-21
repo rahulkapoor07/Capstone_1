@@ -4,8 +4,8 @@ from flask_debugtoolbar import DebugToolbarExtension
 from forms import SignupForm, LoginForm, TickerForm
 from calc import popular_ticker, search_stock
 import os
-import redis
-from flask_session import Session
+from store import redis
+# from flask_session import Session
 
 app = Flask(__name__)
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'postgresql:///stock_market_db').replace("://", "ql://", 1)
@@ -15,14 +15,14 @@ app.config['SQLALCHEMY_ECHO'] = True
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'SECRET!')
 
-redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
-redis = redis.from_url(redis_url)
-app.config['SESSION_TYPE'] = 'redis'
-app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_USE_SIGNER'] = True
-app.config['SESSION_REDIS'] = redis.from_url(redis_url)
-debug = DebugToolbarExtension(app)
-server_session = Session(app)
+# redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
+# redis = redis.from_url(redis_url)
+# app.config['SESSION_TYPE'] = 'redis'
+# app.config['SESSION_PERMANENT'] = False
+# app.config['SESSION_USE_SIGNER'] = True
+# app.config['SESSION_REDIS'] = redis.from_url(redis_url)
+# debug = DebugToolbarExtension(app)
+# server_session = Session(app)
 
 connect_db(app)
 db.create_all()
