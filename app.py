@@ -30,9 +30,9 @@ db.create_all()
 @app.before_request
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
-    if "username" in session:
-    #if redis.get('username').decode('utf-8'):
-        g.user = User.query.get(session['username'])
+    #if "username" in session:
+    if redis.get('username').decode('utf-8'):
+        g.user = User.query.get(redis.get('username').decode('utf-8'))
 
     else:
         g.user = None
@@ -52,8 +52,8 @@ def homepage():
         password = form.password.data
         user = User.authentication(username, password)
         if user:
-            session['username'] = user.username
-            #redis.set('username', user.username)
+            #session['username'] = user.username
+            redis.set('username', user.username)
             flash(f'Welcome back! {user.username}', "success")
             return redirect(f'/users/{user.username}')
         else:
@@ -78,16 +78,16 @@ def signup():
             if new_user:
                 db.session.add(new_user)
                 db.session.commit()
-                session["username"] = new_user.username
-                #redis.set('username',new_user.username)
+                #session["username"] = new_user.username
+                redis.set('username',new_user.username)
                 flash(f"Welcome {new_user.username}!", "success")
                 return redirect(f'/users/{new_user.username}')
     return render_template('signup.html', form=form)
 
 @app.route('/logout')
 def logout():
-    session.pop('username')
-    #redis.set('username','')
+    #session.pop('username')
+    redis.set('username','')
     flash("You have been logged out successfully!", "success")
     return redirect('/')
 
