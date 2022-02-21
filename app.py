@@ -50,7 +50,7 @@ def homepage():
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
-        user = User.authentication(username, password)
+        user = User.authentication(username=username, password=password)
         if user:
             #session['username'] = user.username
             redis.set('username', user.username)
@@ -74,7 +74,7 @@ def signup():
             db.session.rollback()
             flash('Username already taken! Please try different username', "error")
         else:
-            new_user = User.register(first_name.capitalize(), last_name.capitalize(), username, email, password)
+            new_user = User.register(first_name=first_name.capitalize(), last_name=last_name.capitalize(), username=username, email=email, password=password)
             if new_user:
                 db.session.add(new_user)
                 db.session.commit()
