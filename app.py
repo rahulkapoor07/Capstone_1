@@ -31,7 +31,7 @@ db.create_all()
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
     #if "username" in session:
-    if redis.get('username').decode('utf-8'):
+    if redis.get('username').decode('utf-8') != "":
         g.user = User.query.get(redis.get('username').decode('utf-8'))
 
     else:
