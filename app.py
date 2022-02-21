@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, jsonify, flash, session,g
+from flask import Flask, request, redirect, render_template, jsonify, flash,g
 from models import db, connect_db, User, Stock, Cryptocurrency, User_stock, User_cryptocurrency
 from flask_debugtoolbar import DebugToolbarExtension
 from forms import SignupForm, LoginForm, TickerForm
@@ -11,7 +11,7 @@ app = Flask(__name__)
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'postgresql:///stock_market_db').replace("://", "ql://", 1)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
-
+app.config['SESSION_REDIS'] = redis.from_url('redis://localhost:6379')
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'SECRET!')
 debug = DebugToolbarExtension(app)
