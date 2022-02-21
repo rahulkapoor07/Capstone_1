@@ -1,14 +1,13 @@
-from flask import Flask, request, redirect, render_template, jsonify, flash,g
+from flask import Flask, request, redirect, render_template, jsonify, flash,g, session
 from models import db, connect_db, User, Stock, Cryptocurrency, User_stock, User_cryptocurrency
 from flask_debugtoolbar import DebugToolbarExtension
 from forms import SignupForm, LoginForm, TickerForm
 from calc import popular_ticker, search_stock
 import os
 import redis
-#from store import redis
+from flask_session import Session
 
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql:///stock_market_db')
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'postgresql:///stock_market_db').replace("://", "ql://", 1)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
@@ -23,6 +22,7 @@ app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_REDIS'] = redis.from_url(redis_url)
 debug = DebugToolbarExtension(app)
+server_session = Session(app)
 
 connect_db(app)
 db.create_all()
@@ -30,9 +30,9 @@ db.create_all()
 @app.before_request
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
-    #if "username" in session:
-    if redis.get('username').decode('utf-8'):
-        g.user = User.query.get(redis.get('username').decode('utf-8'))
+    if "username" in session:
+    #if redis.get('username').decode('utf-8'):
+        g.user = User.query.get(session['username'])
 
     else:
         g.user = None
@@ -52,8 +52,8 @@ def homepage():
         password = form.password.data
         user = User.authentication(username, password)
         if user:
-            #session['username'] = user.username
-            redis.set('username', user.username)
+            session['username'] = user.username
+            #redis.set('username', user.username)
             flash(f'Welcome back! {user.username}', "success")
             return redirect(f'/users/{user.username}')
         else:
@@ -78,16 +78,16 @@ def signup():
             if new_user:
                 db.session.add(new_user)
                 db.session.commit()
-                # session["username"] = new_user.username
-                redis.set('username',new_user.username)
+                session["username"] = new_user.username
+                #redis.set('username',new_user.username)
                 flash(f"Welcome {new_user.username}!", "success")
                 return redirect(f'/users/{new_user.username}')
     return render_template('signup.html', form=form)
 
 @app.route('/logout')
 def logout():
-    #session.pop('username')
-    redis.set('username','')
+    session.pop('username')
+    #redis.set('username','')
     flash("You have been logged out successfully!", "success")
     return redirect('/')
 
